@@ -1357,7 +1357,7 @@ class PgDatabase implements Database {
   ): Promise<CliAuthorizationRecord | undefined> {
     try {
       return await this.pool.transaction(async (client) => {
-        await this.locks.withTxLock(client, "paseo-cli-authorization-issuance");
+        await this.locks.withTxLock(client, "zentic-cli-authorization-issuance");
         const capacity = await client.query<{
           fingerprint_count: number;
           global_count: number;
@@ -2737,7 +2737,7 @@ class PgDatabase implements Database {
   }
 
   async deactivateBillingPlansExcept(activeIds: readonly string[]): Promise<void> {
-    // An empty snapshot means no Paseo plans remain, so every mirrored plan is deactivated.
+    // An empty snapshot means no Zentic plans remain, so every mirrored plan is deactivated.
     await query(
       this.pool,
       `update billing_plans set active = false where id <> all($1::text[]) and active`,

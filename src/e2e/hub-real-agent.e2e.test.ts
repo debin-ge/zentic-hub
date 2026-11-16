@@ -81,14 +81,14 @@ describeRealAgent("Hub execution MCP real-agent smoke", () => {
 
     const deterministicRun = await hub.runRealAgentRouting(
       "routing-deterministic",
-      "repo=paseo task",
+      "repo=zentic task",
     );
     const deterministic = await hub.realAgentRoutingEvidence(deterministicRun, "codex");
     assert.deepEqual(
       deterministic.steps.map((step) => [step.stepId, step.status]),
       [
         ["classify", "skipped"],
-        ["work-paseo", "succeeded"],
+        ["work-zentic", "succeeded"],
         ["work-hub", "skipped"],
       ],
     );
@@ -99,7 +99,7 @@ describeRealAgent("Hub execution MCP real-agent smoke", () => {
       classified.steps.map((step) => [step.stepId, step.status]),
       [
         ["classify", "succeeded"],
-        ["work-paseo", "skipped"],
+        ["work-zentic", "skipped"],
         ["work-hub", "succeeded"],
       ],
     );
@@ -121,7 +121,7 @@ describeRealAgent("Hub execution MCP real-agent smoke", () => {
       evidence.steps.map((step) => [step.stepId, step.status]),
       [
         ["classify", "succeeded"],
-        ["work-paseo", "skipped"],
+        ["work-zentic", "skipped"],
         ["work-hub", "succeeded"],
       ],
     );

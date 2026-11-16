@@ -9,10 +9,10 @@ describe("current project configuration proof", () => {
     assert.deepEqual(
       bundle.configuration.triggers.map(({ name, sourceFile }) => ({ name, sourceFile })),
       [
-        { name: "discord-request", sourceFile: ".paseo/workflows/discord.yml" },
-        { name: "github-hub", sourceFile: ".paseo/workflows/github-hub.yml" },
-        { name: "github-paseo", sourceFile: ".paseo/workflows/github-paseo.yml" },
-        { name: "slack-request", sourceFile: ".paseo/workflows/slack.yml" },
+        { name: "discord-request", sourceFile: ".zentic/workflows/discord.yml" },
+        { name: "github-hub", sourceFile: ".zentic/workflows/github-hub.yml" },
+        { name: "github-zentic", sourceFile: ".zentic/workflows/github-zentic.yml" },
+        { name: "slack-request", sourceFile: ".zentic/workflows/slack.yml" },
       ],
     );
     for (const provider of ["slack-request", "discord-request"]) {

@@ -181,7 +181,7 @@ export class DaemonAgents implements AgentConnection {
     if (state.kind === "unavailable" && state.reason === "workspace_not_archived") return false;
     if (state.kind !== "recoverable")
       throw new DaemonAgentError(
-        "Workspace cannot be restored; inspect its recovery state in Paseo",
+        "Workspace cannot be restored; inspect its recovery state in Zentic",
       );
     await this.request({ type: "workspace.recovery.restore.request", workspaceId }, timeoutMs);
     return true;
@@ -245,7 +245,7 @@ export class DaemonAgents implements AgentConnection {
     message: Record<string, unknown>,
     timeoutMs = 30_000,
   ): Promise<Record<string, unknown>> {
-    if (!this.supported) throw new DaemonAgentError("Update the Paseo daemon to run Hub agents");
+    if (!this.supported) throw new DaemonAgentError("Update the Zentic daemon to run Hub agents");
     const requestId = randomUUID();
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {

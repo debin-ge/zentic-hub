@@ -57,7 +57,7 @@ export const daemonProviderSnapshot = createServerFn({ method: "GET" })
         {
           fallback:
             error instanceof Error && error.message === "daemon_provider_snapshot_unsupported"
-              ? "Update Paseo on this daemon to browse its providers."
+              ? "Update Zentic on this daemon to browse its providers."
               : "Hub couldn't load this daemon's providers. Check the daemon connection and retry.",
         },
       );

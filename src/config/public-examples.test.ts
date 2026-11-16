@@ -6,15 +6,15 @@ import { compileHubBundle, type HubBundleFile } from "./bundle.js";
 
 const exampleRoot = "examples/single-repo-team-bot";
 const exampleFiles = [
-  ".paseo/hub.yml",
-  ".paseo/workflows/discord.yml",
-  ".paseo/workflows/github.yml",
-  ".paseo/workflows/slack.yml",
-  ".paseo/workflows/partials/classifier.md",
-  ".paseo/workflows/partials/github-progress.md",
-  ".paseo/workflows/partials/progress.md",
-  ".paseo/workflows/partials/safety.md",
-  ".paseo/workflows/partials/worker.md",
+  ".zentic/hub.yml",
+  ".zentic/workflows/discord.yml",
+  ".zentic/workflows/github.yml",
+  ".zentic/workflows/slack.yml",
+  ".zentic/workflows/partials/classifier.md",
+  ".zentic/workflows/partials/github-progress.md",
+  ".zentic/workflows/partials/progress.md",
+  ".zentic/workflows/partials/safety.md",
+  ".zentic/workflows/partials/worker.md",
 ] as const;
 
 describe("public Hub examples", () => {

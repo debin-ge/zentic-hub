@@ -40,7 +40,7 @@ run:
     mode: full-access
   prompt: |
     Review new reports and summarize items that need attention.
-    Scheduling context: ${{ paseo.context }}
+    Scheduling context: ${{ zentic.context }}
   max_runtime: 2h
   idle_timeout: 10m
   auto_archive: true
@@ -50,7 +50,7 @@ run:
 The run block also controls the execution workspace:
 
 - `run.auto_archive` defaults to `true` and archives the workspace after execution.
-- `run.background` defaults to `false`. Set it to `true` in YAML to create a Paseo background
+- `run.background` defaults to `false`. Set it to `true` in YAML to create a Zentic background
   workspace, hidden from workspace listings unless the client requests background workspaces.
   This is independent of archiving. Hub always passes the field through. Older daemons without
   `backgroundWorkspaces` support ignore it: the run proceeds with a visible workspace.
@@ -90,7 +90,7 @@ a tick. The form edits a single event, so a document with several events is edit
 execution settings work normally, including GitHub authority, provider options, worktrees,
 continuation and outputs.
 
-`${{ paseo.context }}` contains a `schedule` object with `trigger_id`, `scheduled_at` (the intended
+`${{ zentic.context }}` contains a `schedule` object with `trigger_id`, `scheduled_at` (the intended
 UTC occurrence), and `timezone`. History identifies the source as `schedule.tick`. Each occurrence
 has its own durable identity; it is never represented as an external user's manual action.
 

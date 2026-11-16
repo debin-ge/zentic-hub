@@ -112,14 +112,14 @@ describe("GitHub registration", () => {
     await configuration.push(registration, "invalid-sha", "push-invalid");
     assert.equal((await database.findActiveProjectConfiguration(project.id))?.id, active?.id);
     assert.deepEqual(configuration.reads, [
-      { installationId: 42, repositoryId: 9001, commitSha: "valid-sha", path: ".paseo/hub.yml" },
+      { installationId: 42, repositoryId: 9001, commitSha: "valid-sha", path: ".zentic/hub.yml" },
       {
         installationId: 42,
         repositoryId: 9001,
         commitSha: "valid-sha",
-        path: ".paseo/workflows/noop.yml",
+        path: ".zentic/workflows/noop.yml",
       },
-      { installationId: 42, repositoryId: 9001, commitSha: "invalid-sha", path: ".paseo/hub.yml" },
+      { installationId: 42, repositoryId: 9001, commitSha: "invalid-sha", path: ".zentic/hub.yml" },
     ]);
     assert.equal(
       (await database.projectConfigurationReadModel(project.id)).lastSyncAttempt?.outcome,
@@ -152,7 +152,7 @@ describe("GitHub registration", () => {
       publicBaseUrl: "https://hub.test",
       configuration: {
         appId: "42",
-        appSlug: "paseo",
+        appSlug: "zentic",
         clientId: "client",
         clientSecret: "secret",
         webhookSecret: "webhook-secret",
@@ -165,7 +165,7 @@ describe("GitHub registration", () => {
           Promise.resolve({ token: "token", expiresAt: Date.now() + 3600_000 }),
         mintInstallationAccessToken: () =>
           Promise.resolve({ token: "scoped-token", expiresAt: Date.now() + 3_600_000 }),
-        getAppBotIdentity: () => Promise.resolve({ id: 123, login: "paseo[bot]" }),
+        getAppBotIdentity: () => Promise.resolve({ id: 123, login: "zentic[bot]" }),
         revokeInstallationToken: () => Promise.resolve(),
         createInstallationOctokit: () => Promise.reject(new Error("unused")),
       },
@@ -227,10 +227,10 @@ describe("GitHub registration", () => {
         {
           id: "github-connection",
           organizationId: "org_1",
-          slug: "getpaseo-github",
+          slug: "getzentic-github",
           installationId: 142,
           accountId: "501",
-          accountLogin: "getpaseo",
+          accountLogin: "getzentic",
           accountType: "Organization",
           status: "active",
           providerApplicationId: "42",
@@ -259,7 +259,7 @@ describe("GitHub registration", () => {
         },
         mintInstallationAccessToken: () =>
           Promise.resolve({ token: "scoped-token", expiresAt: Date.now() + 3_600_000 }),
-        getAppBotIdentity: () => Promise.resolve({ id: 123, login: "paseo[bot]" }),
+        getAppBotIdentity: () => Promise.resolve({ id: 123, login: "zentic[bot]" }),
         revokeInstallationToken: () => Promise.resolve(),
         createInstallationOctokit: () => Promise.reject(new Error("unused")),
       },
@@ -271,12 +271,12 @@ describe("GitHub registration", () => {
     });
 
     assert.equal(
-      await registration.integration?.resolve("project-1", "getpaseo-github", "token"),
+      await registration.integration?.resolve("project-1", "getzentic-github", "token"),
       "test-installation-token",
     );
     assert.deepEqual(installations, [142]);
     await assert.rejects(
-      () => registration.integration!.resolve("project-2", "getpaseo-github", "token"),
+      () => registration.integration!.resolve("project-2", "getzentic-github", "token"),
       /connection is unavailable/u,
     );
   });
@@ -290,10 +290,10 @@ describe("GitHub registration", () => {
         {
           id: "github-connection",
           organizationId: "org_1",
-          slug: "getpaseo-github",
+          slug: "getzentic-github",
           installationId: 142,
           accountId: "501",
-          accountLogin: "getpaseo",
+          accountLogin: "getzentic",
           accountType: "Organization",
           status: "active",
           providerApplicationId: "42",
@@ -327,7 +327,7 @@ describe("GitHub registration", () => {
           identityLookups += 1;
           identityTokens.push(token);
           if (identityFailure !== undefined) return Promise.reject(identityFailure);
-          return Promise.resolve({ id: 123, login: "paseo[bot]" });
+          return Promise.resolve({ id: 123, login: "zentic[bot]" });
         },
         revokeInstallationToken: (token) => {
           revoked.push(token);
@@ -346,15 +346,15 @@ describe("GitHub registration", () => {
     assert.ok(authority);
     const minted = await authority.mint({
       projectId: "project-1",
-      connectionSlug: "getpaseo-github",
-      repositories: ["getpaseo/paseo", "getpaseo/hub"],
+      connectionSlug: "getzentic-github",
+      repositories: ["getzentic/zentic", "getzentic/hub"],
       permissions: { contents: "write", pull_requests: "read" },
     });
     assert.deepEqual(requests, [
       {
         installationId: 142,
-        accountLogin: "getpaseo",
-        repositories: ["getpaseo/paseo", "getpaseo/hub"],
+        accountLogin: "getzentic",
+        repositories: ["getzentic/zentic", "getzentic/hub"],
         permissions: { contents: "write", pull_requests: "read" },
       },
     ]);
@@ -362,7 +362,7 @@ describe("GitHub registration", () => {
       token: "scoped-token",
       expiresAt: minted.expiresAt,
       botUserId: 123,
-      botLogin: "paseo[bot]",
+      botLogin: "zentic[bot]",
     });
     assert.equal(identityLookups, 1);
     assert.deepEqual(identityTokens, ["scoped-token"]);
@@ -371,25 +371,25 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-1",
-          connectionSlug: "getpaseo-github",
-          repositories: ["other-owner/paseo"],
+          connectionSlug: "getzentic-github",
+          repositories: ["other-owner/zentic"],
           permissions: { contents: "read" },
         }),
-      /repository owner.*other-owner.*getpaseo/iu,
+      /repository owner.*other-owner.*getzentic/iu,
     );
     assert.equal(requests.length, 1);
     assert.equal(identityLookups, 1);
 
     const caseInsensitive = await authority.mint({
       projectId: "project-1",
-      connectionSlug: "getpaseo-github",
-      repositories: ["GETPASEO/private"],
+      connectionSlug: "getzentic-github",
+      repositories: ["GETZENTIC/private"],
       permissions: { contents: "read" },
     });
     assert.deepEqual(requests[1], {
       installationId: 142,
-      accountLogin: "getpaseo",
-      repositories: ["GETPASEO/private"],
+      accountLogin: "getzentic",
+      repositories: ["GETZENTIC/private"],
       permissions: { contents: "read" },
     });
 
@@ -398,8 +398,8 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-1",
-          connectionSlug: "getpaseo-github",
-          repositories: ["getpaseo/hub"],
+          connectionSlug: "getzentic-github",
+          repositories: ["getzentic/hub"],
           permissions: { contents: "read" },
         }),
       /identity unavailable/u,
@@ -413,8 +413,8 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-2",
-          connectionSlug: "getpaseo-github",
-          repositories: ["getpaseo/paseo"],
+          connectionSlug: "getzentic-github",
+          repositories: ["getzentic/zentic"],
           permissions: { contents: "read" },
         }),
       /connection is unavailable/u,
@@ -509,7 +509,7 @@ class RegistrationConfigurationFake implements GitHubConfigurationProvider {
         configurationBundleFixture(yaml).map(({ path }) => ({ path, kind: "file" as const })),
       );
     } catch {
-      return Promise.resolve([{ path: ".paseo/hub.yml", kind: "file" as const }]);
+      return Promise.resolve([{ path: ".zentic/hub.yml", kind: "file" as const }]);
     }
   }
   readFileAtCommit(input: { repositoryId: number; commitSha: string; path: string }) {
@@ -522,7 +522,7 @@ class RegistrationConfigurationFake implements GitHubConfigurationProvider {
           ({ path }) => path === input.path,
         )?.content;
       } catch {
-        content = input.path === ".paseo/hub.yml" ? rawYaml : undefined;
+        content = input.path === ".zentic/hub.yml" ? rawYaml : undefined;
       }
     }
     return Promise.resolve(content === undefined ? undefined : { kind: "file" as const, content });
@@ -606,7 +606,7 @@ class SignedOutAuth extends RegistrationAuth {
 function githubConfiguration() {
   return {
     appId: "42",
-    appSlug: "paseo",
+    appSlug: "zentic",
     clientId: "client",
     clientSecret: "secret",
     webhookSecret: "webhook-secret",
@@ -638,7 +638,7 @@ function githubAuth() {
       Promise.resolve({ token: "token", expiresAt: Date.now() + 3600_000 }),
     mintInstallationAccessToken: () =>
       Promise.resolve({ token: "scoped-token", expiresAt: Date.now() + 3_600_000 }),
-    getAppBotIdentity: () => Promise.resolve({ id: 123, login: "paseo[bot]" }),
+    getAppBotIdentity: () => Promise.resolve({ id: 123, login: "zentic[bot]" }),
     revokeInstallationToken: () => Promise.resolve(),
     createInstallationOctokit: () => Promise.reject(new Error("unused")),
   };

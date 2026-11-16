@@ -110,14 +110,14 @@ export function ProductMark({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-        <PaseoGlyph />
+        <ZenticGlyph />
       </span>
-      <span className="text-sm">Paseo Hub</span>
+      <span className="text-sm">Zentic Hub</span>
     </div>
   );
 }
 
-export function PaseoGlyph() {
+export function ZenticGlyph() {
   return (
     <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden="true">
       <path

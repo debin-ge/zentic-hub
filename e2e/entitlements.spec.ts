@@ -123,7 +123,7 @@ test.describe("metered usage", () => {
         agent: "codex/gpt-5.4",
         mode: "full-access",
         thinking: "high",
-        prompt: "${{ paseo.prompt }}",
+        prompt: "${{ zentic.prompt }}",
       });
       await triggers.save("deploy");
     });

@@ -2,7 +2,7 @@ name: github-hub
 on: github.issue_comment
 max_runtime: 2h
 filters:
-  repo: getpaseo/hub
+  repo: getzentic/hub
   from_users: [maintainer]
 steps:
   - id: work
@@ -11,6 +11,6 @@ steps:
     idle_timeout: 10m
     agent: codex
     github:
-      connection: getpaseo
+      connection: getzentic
     prompt:
-      - text: ${{ paseo.prompt }}
+      - text: ${{ zentic.prompt }}

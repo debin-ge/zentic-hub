@@ -18,7 +18,7 @@ describe("Discord Phase 1 trigger provider", () => {
       const provider = createDiscordTriggerProvider({
         configurationStoreForProject: () => store,
         bot,
-        billingUrlForOrganization: async () => "https://hub.paseo.sh/o/acme/settings/billing",
+        billingUrlForOrganization: async () => "https://hub.zentic.sh/o/acme/settings/billing",
       });
       const match = (
         await provider.match(external(project.id, revision.id, event({ threadId: "207" })))
@@ -37,7 +37,7 @@ describe("Discord Phase 1 trigger provider", () => {
       );
       assert.equal(
         bot.messages[0]?.content,
-        "This org has used its 50 free runs for September. Runs reset on October 1, or upgrade to Pro under Billing: https://hub.paseo.sh/o/acme/settings/billing",
+        "This org has used its 50 free runs for September. Runs reset on October 1, or upgrade to Pro under Billing: https://hub.zentic.sh/o/acme/settings/billing",
       );
       assert.equal(bot.messages[0]?.threadId, "207");
     } finally {
@@ -512,12 +512,12 @@ describe("Discord Phase 1 trigger provider", () => {
         {
           channelId: "200",
           threadId: "207",
-          content: "Paseo agent failed: boom",
+          content: "Zentic agent failed: boom",
         },
         {
           channelId: "200",
           threadId: "207",
-          content: "Paseo machine terminated before the agent could complete: launch_failed",
+          content: "Zentic machine terminated before the agent could complete: launch_failed",
         },
       ],
     );
@@ -642,7 +642,7 @@ function inputConfiguration() {
       {
         ...trigger,
         inputs: {
-          repo: { type: "string", choices: ["paseo", "hub"] },
+          repo: { type: "string", choices: ["zentic", "hub"] },
           agent: { type: "string", default: "codex", choices: ["codex", "opus"] },
         },
         filters: {
@@ -655,7 +655,7 @@ function inputConfiguration() {
           {
             ...trigger.steps[0]!,
             agent: { provider: "codex", mode: "bypassPermissions" },
-            prompt: [{ text: "Request: ${{ paseo.prompt }}" }],
+            prompt: [{ text: "Request: ${{ zentic.prompt }}" }],
           },
         ],
       },

@@ -44,9 +44,9 @@ on:
       channels: [engineering]
       from_users: [U0BNGPZEXT2]
   github.issue_comment:
-    connection: getpaseo-github
+    connection: getzentic-github
     filters:
-      contains: "@paseo-bot"
+      contains: "@zentic-bot"
       from_users: [boudra]
 inputs:
   model:
@@ -58,7 +58,7 @@ run:
     daemon: devbox
     cwd: /workspace/company
   agent:
-    select: \${{ paseo.inputs.model }}
+    select: \${{ zentic.inputs.model }}
     choices:
       codex:
         provider: codex
@@ -69,14 +69,14 @@ run:
   max_runtime: 90m
   idle_timeout: 10m
   github:
-    connection: getpaseo-github
-    repositories: [getpaseo/paseo, getpaseo/hub]
+    connection: getzentic-github
+    repositories: [getzentic/zentic, getzentic/hub]
     permissions:
       contents: write
       pull_requests: write
   prompt: |
-    Use Paseo when delegation is useful.
-    \${{ paseo.prompt }}
+    Use Zentic when delegation is useful.
+    \${{ zentic.prompt }}
   outputs:
     slack.reply:
       max: 5
@@ -119,7 +119,7 @@ describe("self-contained trigger documents", () => {
   });
 
   it("compiles an authored title template and preserves it through canonical YAML", () => {
-    const title = "Intake · ${{ paseo.execution.id }}";
+    const title = "Intake · ${{ zentic.execution.id }}";
     const yaml = trigger.replace("  max_runtime: 90m", `  max_runtime: 90m\n  title: "${title}"`);
     const compiled = compileTriggerDocument(yaml);
     assert.equal(compiled.events[0]?.steps[0]?.title, title);
@@ -163,7 +163,7 @@ describe("self-contained trigger documents", () => {
       ["slack.mention", "github.issue_comment"],
     );
     assert.deepEqual(compiled.events[0]?.steps[0]?.agent, {
-      selector: "${{ paseo.inputs.model }}",
+      selector: "${{ zentic.inputs.model }}",
       choices: {
         codex: { provider: "codex", model: "gpt-5.6-sol" },
         claude: { provider: "claude", model: "claude-opus-5" },

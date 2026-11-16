@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
 
-const workspacePath = resolve(process.env.PASEO_WORKTREE_PATH ?? process.cwd());
+const workspacePath = resolve(process.env.ZENTIC_WORKTREE_PATH ?? process.cwd());
 const LOCAL_WORKSPACE_FILES = [".env", "AGENTS.override.md", "CLAUDE.local.md"];
 
 /**
@@ -14,8 +14,8 @@ const LOCAL_WORKSPACE_FILES = [".env", "AGENTS.override.md", "CLAUDE.local.md"];
  */
 const UNCONFIGURED = [
   "DATABASE_URL",
-  "PASEO_HUB_APP_URL",
-  "PASEO_HUB_AUTH_SECRET",
+  "ZENTIC_HUB_APP_URL",
+  "ZENTIC_HUB_AUTH_SECRET",
   "GITHUB_APP_ID",
   "GITHUB_APP_SLUG",
   "GITHUB_APP_CLIENT_ID",
@@ -30,15 +30,15 @@ const UNCONFIGURED = [
   "DISCORD_CLIENT_ID",
   "DISCORD_CLIENT_SECRET",
   "DISCORD_BOT_TOKEN",
-  "PASEO_BOOTSTRAP_ORGANIZATION",
-  "PASEO_BOOTSTRAP_OWNER_EMAIL",
-  "PASEO_BOOTSTRAP_OWNER_PASSWORD",
+  "ZENTIC_BOOTSTRAP_ORGANIZATION",
+  "ZENTIC_BOOTSTRAP_OWNER_EMAIL",
+  "ZENTIC_BOOTSTRAP_OWNER_PASSWORD",
 ];
 
 /**
  * What a workspace action actually runs, as a value rather than a spawn.
  *
- * `dev` is the workspace's `app` service: the ordinary development server on the port Paseo
+ * `dev` is the workspace's `app` service: the ordinary development server on the port Zentic
  * assigned, using the configuration the checkout already has. `evidence` is a separate service
  * nobody starts by accident — the production build against its own data directory with every
  * variable above emptied.
@@ -53,7 +53,7 @@ export function planWorkspaceAction(action, options) {
     return {
       command: "npm",
       args: ["run", "dev", "--", "--host", host, "--port", port],
-      environment: { PASEO_HUB_APP_URL: options.appUrl ?? `http://127.0.0.1:${port}` },
+      environment: { ZENTIC_HUB_APP_URL: options.appUrl ?? `http://127.0.0.1:${port}` },
       build: false,
     };
   }
@@ -63,8 +63,8 @@ export function planWorkspaceAction(action, options) {
       args: ["dist/index.js"],
       environment: {
         PORT: port,
-        PASEO_HUB_BIND: host,
-        PASEO_HUB_DATA_DIR: join(root, ".dev", "operator-app-evidence", "runtime"),
+        ZENTIC_HUB_BIND: host,
+        ZENTIC_HUB_DATA_DIR: join(root, ".dev", "operator-app-evidence", "runtime"),
         ...Object.fromEntries(UNCONFIGURED.map((name) => [name, ""])),
       },
       build: true,
@@ -86,7 +86,7 @@ async function main() {
     host: process.env.HOST ?? "127.0.0.1",
     port: requiredPort(),
     workspacePath,
-    ...(process.env.PASEO_URL === undefined ? {} : { appUrl: process.env.PASEO_URL }),
+    ...(process.env.ZENTIC_URL === undefined ? {} : { appUrl: process.env.ZENTIC_URL }),
   });
   if (plan.build) await runCommand(npmBinary(), ["run", "build"], {});
   await runCommand(
@@ -97,7 +97,7 @@ async function main() {
 }
 
 async function copyWorkspaceLocalFiles() {
-  const sourceRoot = process.env.PASEO_SOURCE_CHECKOUT_PATH;
+  const sourceRoot = process.env.ZENTIC_SOURCE_CHECKOUT_PATH;
   if (sourceRoot === undefined || resolve(sourceRoot) === workspacePath) return;
 
   for (const name of LOCAL_WORKSPACE_FILES) {
@@ -116,9 +116,9 @@ async function copyIfPresent(source, destination) {
 }
 
 function requiredPort() {
-  const port = process.env.PASEO_PORT;
+  const port = process.env.ZENTIC_PORT;
   if (port === undefined || !/^\d+$/.test(port)) {
-    throw new Error("PASEO_PORT must be set to the service port assigned by Paseo");
+    throw new Error("ZENTIC_PORT must be set to the service port assigned by Zentic");
   }
   return port;
 }

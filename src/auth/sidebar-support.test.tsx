@@ -22,7 +22,7 @@ describe("the sidebar help item", () => {
     assert.match(markup, /aria-expanded="false"/u);
     // Nothing about support is on screen before the popover opens.
     assert.doesNotMatch(markup, /discord/iu);
-    assert.doesNotMatch(markup, /paseo\.sh/u);
+    assert.doesNotMatch(markup, /zentic\.sh/u);
   });
 });
 
@@ -31,9 +31,9 @@ describe("the help popover's copy", () => {
     const markup = renderToStaticMarkup(<HelpChannels />);
 
     assert.match(markup, /href="https:\/\/discord\.gg\/[A-Za-z0-9]+"/u);
-    assert.match(markup, /#paseo-hub/u);
-    assert.match(markup, /href="mailto:hello@paseo\.sh"/u);
-    assert.match(markup, />hello@paseo\.sh</u);
+    assert.match(markup, /#zentic-hub/u);
+    assert.match(markup, /href="mailto:hello@zentic\.sh"/u);
+    assert.match(markup, />hello@zentic\.sh</u);
   });
 
   it("opens Discord in a new tab without handing it this session", () => {

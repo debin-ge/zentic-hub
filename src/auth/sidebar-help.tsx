@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popove
 import { SidebarMenuButton, SidebarMenuItem } from "../components/ui/sidebar.js";
 
 const DISCORD_INVITE = "https://discord.gg/jz8T2uahpH";
-const SUPPORT_EMAIL = "hello@paseo.sh";
+const SUPPORT_EMAIL = "hello@zentic.sh";
 
 /**
  * The two places a Hub user can reach a human. Kept as its own component because it is the only
@@ -17,10 +17,10 @@ export function HelpChannels() {
         Join the{" "}
         <Button asChild variant="link">
           <a href={DISCORD_INVITE} target="_blank" rel="noreferrer">
-            Paseo Discord
+            Zentic Discord
           </a>
         </Button>{" "}
-        and ask in #paseo-hub.
+        and ask in #zentic-hub.
       </p>
       <p>
         Or email{" "}

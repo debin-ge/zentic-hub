@@ -60,7 +60,7 @@ interface ActiveSocket {
 
 export type DaemonSessionProtocol = "legacy" | "session-v1";
 
-const DAEMON_SESSION_PROTOCOL_HEADER = "x-paseo-session-protocol";
+const DAEMON_SESSION_PROTOCOL_HEADER = "x-zentic-session-protocol";
 const DAEMON_SESSION_PROTOCOL_VERSION = "1";
 
 type DaemonConnectedHandler = (daemon: DaemonRecord) => void | Promise<void>;
@@ -499,7 +499,7 @@ export function createDaemonUpgradeHandler(
       socket.destroy();
       return;
     }
-    const daemonId = request.headers["x-paseo-daemon-id"];
+    const daemonId = request.headers["x-zentic-daemon-id"];
     const credential = bearer(request.headers.authorization);
     if (typeof daemonId !== "string" || !credential) return rejectUpgrade(socket, 401);
     const daemon = await database.findDaemonById(daemonId);

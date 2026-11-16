@@ -12,7 +12,7 @@ describe("Hub data directory", () => {
         homeDirectory: resolve("fixtures", "home"),
         workingDirectory: resolve("fixtures", "work"),
       }),
-      join(dataHome, "paseo-hub"),
+      join(dataHome, "zentic-hub"),
     );
   });
 
@@ -25,18 +25,18 @@ describe("Hub data directory", () => {
           homeDirectory,
           workingDirectory: resolve("fixtures", "work"),
         }),
-        join(homeDirectory, ".local", "share", "paseo-hub"),
+        join(homeDirectory, ".local", "share", "zentic-hub"),
       );
     }
   });
 
-  it("keeps every defined PASEO_HUB_DATA_DIR as an explicit override", () => {
+  it("keeps every defined ZENTIC_HUB_DATA_DIR as an explicit override", () => {
     const explicitDirectory = resolve("fixtures", "explicit-data");
     const workingDirectory = resolve("fixtures", "work");
     assert.equal(
       resolveHubDataDirectory({
         environment: {
-          PASEO_HUB_DATA_DIR: explicitDirectory,
+          ZENTIC_HUB_DATA_DIR: explicitDirectory,
           XDG_DATA_HOME: resolve("fixtures", "xdg-data"),
         },
         homeDirectory: resolve("fixtures", "home"),
@@ -47,18 +47,18 @@ describe("Hub data directory", () => {
     assert.equal(
       resolveHubDataDirectory({
         environment: {
-          PASEO_HUB_DATA_DIR: "var/paseo-hub",
+          ZENTIC_HUB_DATA_DIR: "var/zentic-hub",
           XDG_DATA_HOME: resolve("fixtures", "xdg-data"),
         },
         homeDirectory: resolve("fixtures", "home"),
         workingDirectory,
       }),
-      join(workingDirectory, "var", "paseo-hub"),
+      join(workingDirectory, "var", "zentic-hub"),
     );
     assert.equal(
       resolveHubDataDirectory({
         environment: {
-          PASEO_HUB_DATA_DIR: "",
+          ZENTIC_HUB_DATA_DIR: "",
           XDG_DATA_HOME: resolve("fixtures", "xdg-data"),
         },
         homeDirectory: resolve("fixtures", "home"),

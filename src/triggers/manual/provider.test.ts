@@ -16,7 +16,7 @@ describe("manual invocation provider", () => {
           max_runtime: "1h",
           filters: { from_users: ["*"], inputs: { repo: "hub" } },
           inputs: {
-            repo: { type: "string", choices: ["paseo", "hub"] },
+            repo: { type: "string", choices: ["zentic", "hub"] },
             agent: { type: "string", default: "codex", choices: ["codex", "opus"] },
           },
           steps: [
@@ -26,7 +26,7 @@ describe("manual invocation provider", () => {
               max_runtime: "10m",
               idle_timeout: "1m",
               agent: { provider: "codex" },
-              prompt: [{ text: "Request: ${{ paseo.prompt }}" }],
+              prompt: [{ text: "Request: ${{ zentic.prompt }}" }],
             },
           ],
         },
@@ -76,7 +76,7 @@ describe("manual invocation provider", () => {
               max_runtime: "10m",
               idle_timeout: "1m",
               agent: { provider: "codex" },
-              prompt: [{ text: "Request: ${{ paseo.prompt }}" }],
+              prompt: [{ text: "Request: ${{ zentic.prompt }}" }],
             },
           ],
         },

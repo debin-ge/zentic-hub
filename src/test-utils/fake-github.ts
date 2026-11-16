@@ -107,7 +107,7 @@ export class FakeGitHub {
   readonly apiRequests: string[] = [];
 
   constructor(private readonly options: FakeGitHubOptions) {
-    this.appSlug = options.appSlug ?? "paseo";
+    this.appSlug = options.appSlug ?? "zentic";
     this.clientId = options.clientId ?? "client";
     this.clientSecret = options.clientSecret ?? "secret";
     this.prefix = new URL(options.webBaseUrl).pathname.replace(/\/$/u, "");
@@ -479,7 +479,7 @@ function html(title: string, body: string, status = 200): Response {
 export function fakeGitHubConnectionClient(github: FakeGitHub, publicBaseUrl: string) {
   return createGitHubConnectionClient({
     publicBaseUrl,
-    appSlug: "paseo",
+    appSlug: "zentic",
     clientId: "client",
     clientSecret: "secret",
     appAuth: github.appAuth,

@@ -1,15 +1,15 @@
 {
-  "name": "@getpaseo/hub",
+  "name": "@getzentic/hub",
   "version": "0.11.0",
-  "description": "Self-hosted automation for Paseo daemons",
-  "homepage": "https://paseo.sh/docs/hub",
+  "description": "Self-hosted automation for Zentic daemons",
+  "homepage": "https://zentic.sh/docs/hub",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/getpaseo/hub.git"
+    "url": "git+https://github.com/getzentic/hub.git"
   },
   "bin": {
-    "paseo-hub": "bin/paseo-hub.js"
+    "zentic-hub": "bin/zentic-hub.js"
   },
   "files": [
     "bin",
@@ -34,7 +34,7 @@
     "typecheck:e2e": "tsgo --noEmit -p tsconfig.e2e.json",
     "start": "node dist/index.js",
     "test": "npm run test:scripts && vitest run",
-    "test:scripts": "node --test scripts/release-metadata.node-test.mjs scripts/paseo-workspace.node-test.mjs",
+    "test:scripts": "node --test scripts/release-metadata.node-test.mjs scripts/zentic-workspace.node-test.mjs",
     "test:release": "node --test scripts/release-metadata.node-test.mjs",
     "test:e2e:hub:source": "RUN_HUB_E2E=1 vitest run src/e2e/hub-foundation.e2e.test.ts src/e2e/hub-attachments.e2e.test.ts --bail=1",
     "test:e2e:hub:real-agent": "RUN_HUB_REAL_AGENT_E2E=1 vitest run src/e2e/hub-real-agent.e2e.test.ts --bail=1",
@@ -61,7 +61,7 @@
     "@codemirror/view": "^6.43.8",
     "@electric-sql/pglite": "^0.5.4",
     "@fontsource-variable/inter": "^5.3.0",
-    "@getpaseo/protocol": "^0.9.1",
+    "@getzentic/protocol": "file:../zentic/packages/protocol",
     "@js-temporal/polyfill": "^0.5.1",
     "@lezer/highlight": "^1.2.3",
     "@modelcontextprotocol/sdk": "^1.30.0",

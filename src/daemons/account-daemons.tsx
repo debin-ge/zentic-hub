@@ -44,7 +44,7 @@ const DAEMON_COLUMNS: readonly DataColumn[] = [
   { header: "", align: "end" },
 ];
 const DAEMONS_DESCRIPTION = "Stable daemon identities registered to this organization.";
-const DAEMON_DOCS_URL = "https://paseo.sh/docs/hub/daemons";
+const DAEMON_DOCS_URL = "https://zentic.sh/docs/hub/daemons";
 const DAEMONS_EMPTY = {
   title: "No daemons connected",
   description:

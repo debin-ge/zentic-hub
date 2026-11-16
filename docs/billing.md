@@ -230,12 +230,12 @@ in `e2e/billing-boundary.spec.ts`, `e2e/billing-catalog.spec.ts`, `e2e/billing-s
 `e2e/billing-mobile.spec.ts`. The fixture catalog in `src/e2e/harness/browser-billing.ts` mirrors
 the live Stripe products, allowance included: change one and change the other.
 
-Running the E2E suite locally requires `PASEO_E2E_WORKTREE` pointed at a checkout of
-`getpaseo/paseo` — the harness npm-packs the server packages from it. Without it, entitlements'
+Running the E2E suite locally requires `ZENTIC_E2E_WORKTREE` pointed at a checkout of
+`getzentic/zentic` — the harness npm-packs the server packages from it. Without it, entitlements'
 metered-usage E2E fails with a worktree-mismatch error that reads like a code regression but is
 an environment gap.
 
 ## Explicitly out of scope
 
 Proration UI, invoices, tax, dunning, coupons, multi-currency, a second payment provider, and a
-Hub-hosted marketing pricing page — paseo.sh fetches `/api/billing/plans` and renders its own.
+Hub-hosted marketing pricing page — zentic.sh fetches `/api/billing/plans` and renders its own.

@@ -6,17 +6,17 @@ import { spawnSync } from "node:child_process";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { planWorkspaceAction } from "./paseo-workspace.mjs";
+import { planWorkspaceAction } from "./zentic-workspace.mjs";
 
-const config = JSON.parse(readFileSync(new URL("../paseo.json", import.meta.url), "utf8"));
+const config = JSON.parse(readFileSync(new URL("../zentic.json", import.meta.url), "utf8"));
 const workspace = { host: "127.0.0.1", port: "4321", workspacePath: "/tmp/workspace" };
 
 test("a workspace's app service runs the development server", () => {
-  assert.equal(config.scripts.app.command, "node ./scripts/paseo-workspace.mjs dev");
+  assert.equal(config.scripts.app.command, "node ./scripts/zentic-workspace.mjs dev");
 });
 
 test("the evidence service is separately named, so nothing starts it by accident", () => {
-  assert.equal(config.scripts.evidence.command, "node ./scripts/paseo-workspace.mjs evidence");
+  assert.equal(config.scripts.evidence.command, "node ./scripts/zentic-workspace.mjs evidence");
   assert.notEqual(config.scripts.app.command, config.scripts.evidence.command);
 });
 
@@ -24,19 +24,19 @@ test("dev serves the checkout on the assigned port with the configuration it alr
   const plan = planWorkspaceAction("dev", workspace);
   assert.equal(plan.command, "npm");
   assert.deepEqual(plan.args, ["run", "dev", "--", "--host", "127.0.0.1", "--port", "4321"]);
-  assert.deepEqual(plan.environment, { PASEO_HUB_APP_URL: "http://127.0.0.1:4321" });
+  assert.deepEqual(plan.environment, { ZENTIC_HUB_APP_URL: "http://127.0.0.1:4321" });
   assert.equal(plan.build, false);
 });
 
-test("dev takes its app URL from the workspace when Paseo published one", () => {
+test("dev takes its app URL from the workspace when Zentic published one", () => {
   const plan = planWorkspaceAction("dev", { ...workspace, appUrl: "https://workspace.example" });
-  assert.deepEqual(plan.environment, { PASEO_HUB_APP_URL: "https://workspace.example" });
+  assert.deepEqual(plan.environment, { ZENTIC_HUB_APP_URL: "https://workspace.example" });
 });
 
 test("dev never builds, never redirects the data directory, and never blanks configuration", () => {
   const { environment, build } = planWorkspaceAction("dev", workspace);
   assert.equal(build, false);
-  assert.equal("PASEO_HUB_DATA_DIR" in environment, false);
+  assert.equal("ZENTIC_HUB_DATA_DIR" in environment, false);
   for (const name of ["DATABASE_URL", "GITHUB_APP_ID", "SLACK_CLIENT_ID", "DISCORD_BOT_TOKEN"]) {
     assert.equal(name in environment, false, `dev must leave ${name} alone`);
   }
@@ -49,7 +49,7 @@ test("evidence is its own action and is never what dev runs", () => {
   assert.equal(evidence.build, true);
   assert.deepEqual(evidence.args, ["dist/index.js"]);
   assert.equal(
-    evidence.environment.PASEO_HUB_DATA_DIR,
+    evidence.environment.ZENTIC_HUB_DATA_DIR,
     "/tmp/workspace/.dev/operator-app-evidence/runtime",
   );
   for (const name of ["DATABASE_URL", "GITHUB_APP_ID", "SLACK_CLIENT_ID", "DISCORD_BOT_TOKEN"]) {
@@ -62,7 +62,7 @@ test("an unknown action is refused rather than guessed at", () => {
 });
 
 test("worktree setup copies local agent instructions even when there is no .env", () => {
-  const root = mkdtempSync(join(tmpdir(), "paseo-hub-worktree-setup-"));
+  const root = mkdtempSync(join(tmpdir(), "zentic-hub-worktree-setup-"));
   const source = join(root, "source");
   const worktree = join(root, "worktree");
   mkdirSync(source);
@@ -73,12 +73,12 @@ test("worktree setup copies local agent instructions even when there is no .env"
   try {
     const result = spawnSync(
       process.execPath,
-      [fileURLToPath(new URL("./paseo-workspace.mjs", import.meta.url)), "setup"],
+      [fileURLToPath(new URL("./zentic-workspace.mjs", import.meta.url)), "setup"],
       {
         env: {
           ...process.env,
-          PASEO_SOURCE_CHECKOUT_PATH: source,
-          PASEO_WORKTREE_PATH: worktree,
+          ZENTIC_SOURCE_CHECKOUT_PATH: source,
+          ZENTIC_WORKTREE_PATH: worktree,
         },
         encoding: "utf8",
       },

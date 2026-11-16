@@ -55,7 +55,7 @@ run:
     TEAM: core
   github:
     connection: company-github
-    repositories: [paseo/hub]
+    repositories: [zentic/hub]
   output:
     schema:
       type: object
@@ -103,7 +103,7 @@ describe("trigger form YAML bridge", () => {
     expect(value.run.env).toEqual({ TEAM: "core" });
     expect(value.run.github).toEqual({
       connection: "company-github",
-      repositories: ["paseo/hub"],
+      repositories: ["zentic/hub"],
     });
     expect(value.run.output).toBeDefined();
     expect(value.run.outputs).toEqual({ "slack.reply": { max: 3 } });
@@ -212,7 +212,7 @@ describe("trigger form YAML bridge", () => {
       githubRepositories: "",
       githubPermissions: "",
       githubDuration: "1h",
-      prompt: "${{ paseo.prompt }}",
+      prompt: "${{ zentic.prompt }}",
     });
     const projection = projectTriggerForm(initial);
     if (projection.status !== "editable") throw new Error(projection.reason);
@@ -444,7 +444,7 @@ test("continuation policies round-trip through the form and YAML", () => {
     const yaml = patchTriggerYaml(ADVANCED, {
       ...projection.value,
       continuationMode: mode,
-      continuationKey: "${{ paseo.inputs.ticket }}",
+      continuationKey: "${{ zentic.inputs.ticket }}",
     });
     const next = projectTriggerForm(yaml);
     expect(next).toMatchObject({ status: "editable", value: { continuationMode: mode } });

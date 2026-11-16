@@ -26,7 +26,7 @@ import {
   type LaunchMachineIntent,
 } from "../dispatcher/launch-machine-intent.js";
 import { logger as defaultLogger } from "../logger.js";
-import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getpaseo/protocol/agent-title-limits";
+import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getzentic/protocol/agent-title-limits";
 import { reportFailure } from "../failures/index.js";
 import type { TriggerProvider } from "../triggers/index.js";
 import type { ExecutionAuthority } from "../execution-authority/index.js";
@@ -1789,7 +1789,7 @@ export function durableExecutionId(
   >,
 ): string {
   const bytes = createHash("sha256")
-    .update("paseo-durable-execution-v1\0")
+    .update("zentic-durable-execution-v1\0")
     .update(intent.triggerRunId)
     .update("\0")
     .update(intent.configurationRevisionId)
@@ -1980,7 +1980,7 @@ async function buildCreateAgentOptions(
 }
 
 /**
- * Paseo shows the agent title beside the workspace title, so the agent title is static and the
+ * Zentic shows the agent title beside the workspace title, so the agent title is static and the
  * workspace carries the identity: an authored `run.title` when present, otherwise the trigger
  * name (which already carries the platform or the bot's job) and the execution prefix that tells
  * runs of one trigger apart. A continuation session keeps the titles from the execution that
@@ -2004,9 +2004,9 @@ function buildAgentEnv(
 ): Record<string, string> {
   return {
     ...materializedEnv,
-    PASEO_AGENT_PROVIDER: intent.agent.provider,
-    ...(intent.agent.mode === undefined ? {} : { PASEO_AGENT_MODE: intent.agent.mode }),
-    PASEO_HUB_CONFIG_JSON: JSON.stringify(intent.hubConfig),
+    ZENTIC_AGENT_PROVIDER: intent.agent.provider,
+    ...(intent.agent.mode === undefined ? {} : { ZENTIC_AGENT_MODE: intent.agent.mode }),
+    ZENTIC_HUB_CONFIG_JSON: JSON.stringify(intent.hubConfig),
   };
 }
 

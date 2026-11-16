@@ -18,7 +18,7 @@ describe("embedded startup trigger migration", () => {
   });
 
   it("persists the migration marker and self-contained revisions across reopen", async () => {
-    root = await mkdtemp(join(tmpdir(), "paseo-trigger-migration-"));
+    root = await mkdtemp(join(tmpdir(), "zentic-trigger-migration-"));
     const first = await embeddedDatabaseRuntime(join(root, "database"));
     await first.runtime.migrate();
     const database = createDatabase(first.runtime, first.locks);

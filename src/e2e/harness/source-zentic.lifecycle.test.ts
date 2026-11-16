@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { describe, it } from "vitest";
-import { stopProcess } from "./source-paseo.js";
+import { stopProcess } from "./source-zentic.js";
 
-describe("source Paseo process ownership", () => {
+describe("source Zentic process ownership", () => {
   it("terminates a detached agent CLI child tree", async () => {
     const parent = spawn(
       process.execPath,

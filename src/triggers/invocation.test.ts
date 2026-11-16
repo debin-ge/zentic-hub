@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import { parseInvocation } from "./invocation.js";
 
 const inputs = {
-  repo: { type: "string" as const, choices: ["paseo", "hub"] },
+  repo: { type: "string" as const, choices: ["zentic", "hub"] },
   agent: { type: "string" as const, default: "codex", choices: ["codex", "opus"] },
   count: { type: "number" as const },
 };
@@ -17,10 +17,10 @@ describe("provider-neutral message invocation parser", () => {
   it.each([
     {
       name: "parses after the mention without changing the prompt",
-      message: "  @Paseo   repo=hub investigate",
-      mention: "@Paseo",
+      message: "  @Zentic   repo=hub investigate",
+      mention: "@Zentic",
       expected: {
-        prompt: "  @Paseo   repo=hub investigate",
+        prompt: "  @Zentic   repo=hub investigate",
         inputs: { repo: "hub", agent: "codex" },
       },
     },
@@ -50,19 +50,19 @@ describe("provider-neutral message invocation parser", () => {
     },
     {
       name: "requires a mention boundary before removing the provider mention",
-      message: "@PaseoBot repo=hub investigate",
-      mention: "@Paseo",
+      message: "@ZenticBot repo=hub investigate",
+      mention: "@Zentic",
       expected: {
-        prompt: "@PaseoBot repo=hub investigate",
+        prompt: "@ZenticBot repo=hub investigate",
         inputs: { agent: "codex" },
       },
     },
     {
       name: "does not remove an embedded provider mention",
-      message: "request @Paseo repo=hub investigate",
-      mention: "@Paseo",
+      message: "request @Zentic repo=hub investigate",
+      mention: "@Zentic",
       expected: {
-        prompt: "request @Paseo repo=hub investigate",
+        prompt: "request @Zentic repo=hub investigate",
         inputs: { agent: "codex" },
       },
     },
@@ -90,8 +90,8 @@ describe("provider-neutral message invocation parser", () => {
     },
     {
       name: "duplicate key",
-      message: "repo=hub repo=paseo investigate",
-      expectedPrompt: "repo=hub repo=paseo investigate",
+      message: "repo=hub repo=zentic investigate",
+      expectedPrompt: "repo=hub repo=zentic investigate",
       reason: /duplicate.*repo/iu,
     },
   ])("preserves the complete prompt after a $name control-token rejection", (example) => {
@@ -116,8 +116,8 @@ describe("provider-neutral message invocation parser", () => {
     ["invalid boolean", "dry=sometimes investigate", "dry=sometimes investigate", /dry.*boolean/iu],
     [
       "duplicate key",
-      "repo=hub repo=paseo investigate",
-      "repo=hub repo=paseo investigate",
+      "repo=hub repo=zentic investigate",
+      "repo=hub repo=zentic investigate",
       /duplicate.*repo/iu,
     ],
   ] as const)("rejects %s values before execution", (_name, message, expectedPrompt, error) => {

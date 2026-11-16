@@ -74,12 +74,12 @@ describe("startup project trigger migration", () => {
   it("deterministically disambiguates duplicate trigger names when projects collapse", async () => {
     const database = createMemoryDatabase({ organizationIds: ["org"] });
     await activeProject(database, "hub", [workflow("request", "manual.run", oneStep())]);
-    await activeProject(database, "paseo", [workflow("request", "manual.run", oneStep())]);
+    await activeProject(database, "zentic", [workflow("request", "manual.run", oneStep())]);
 
     await migrateLegacyProjectTriggers(database);
     assert.deepEqual(
       (await database.listOrganizationTriggers("org")).map(({ name }) => name).sort(),
-      ["paseo-request", "request"],
+      ["zentic-request", "request"],
     );
   });
 
@@ -175,7 +175,7 @@ async function activeProject(
     slug,
     createdByUserId: null,
   });
-  const files = [{ path: ".paseo/hub.yml", content: hub }, ...workflows];
+  const files = [{ path: ".zentic/hub.yml", content: hub }, ...workflows];
   const bundle = compileHubBundle(files);
   const revision = await database.insertProjectConfigurationRevision({
     projectId: project.id,
@@ -208,7 +208,7 @@ function slackConnection(id: string, teamId: string) {
 function workflow(name: string, event: string, body: string): HubBundleFile {
   const filters = event === "slack.mention" ? "filters: { from_users: [U123] }\n" : "";
   return {
-    path: `.paseo/workflows/${name}.yml`,
+    path: `.zentic/workflows/${name}.yml`,
     content: `name: ${name}\non: ${event}\nmax_runtime: 2h\n${filters}${body}`,
   };
 }

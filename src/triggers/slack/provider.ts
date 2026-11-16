@@ -290,7 +290,7 @@ export function createSlackTriggerProvider(options: {
         await failWithNotice(
           options.client,
           context.target,
-          `Paseo agent failed: ${reason}`,
+          `Zentic agent failed: ${reason}`,
           reactionState,
         );
         return null;

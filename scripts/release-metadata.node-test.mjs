@@ -35,12 +35,12 @@ test("marks prereleases without selecting a different changelog section", () => 
 });
 
 test("publishes latest only for stable releases", () => {
-  assert.deepEqual(imageTags("GetPaseo", { version: "0.1.0", prerelease: false }), [
-    "ghcr.io/getpaseo/hub:0.1.0",
-    "ghcr.io/getpaseo/hub:latest",
+  assert.deepEqual(imageTags("GetZentic", { version: "0.1.0", prerelease: false }), [
+    "ghcr.io/getzentic/hub:0.1.0",
+    "ghcr.io/getzentic/hub:latest",
   ]);
-  assert.deepEqual(imageTags("GetPaseo", { version: "0.2.0-beta.1", prerelease: true }), [
-    "ghcr.io/getpaseo/hub:0.2.0-beta.1",
+  assert.deepEqual(imageTags("GetZentic", { version: "0.2.0-beta.1", prerelease: true }), [
+    "ghcr.io/getzentic/hub:0.2.0-beta.1",
   ]);
 });
 

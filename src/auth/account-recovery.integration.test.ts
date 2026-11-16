@@ -18,7 +18,7 @@ describe("verified account recovery boundary", () => {
   it.each([undefined, "pending-invitation"])(
     "withholds a session until email verification and resets a password without enumeration (invitation: %s)",
     async (invitation) => {
-      const directory = await mkdtemp(join(tmpdir(), "paseo-account-recovery-"));
+      const directory = await mkdtemp(join(tmpdir(), "zentic-account-recovery-"));
       const { runtime, locks } = await embeddedDatabaseRuntime(directory);
       await runtime.migrate();
       const database = createDatabase(runtime, locks);

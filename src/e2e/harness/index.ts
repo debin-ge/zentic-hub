@@ -12,7 +12,7 @@ import { isHubFinishExecutionToolName } from "../../hub/protocol.js";
 import { DispatchedManualRunSchema, ProblemSchema } from "../../public-api/contracts.js";
 import { runCommand } from "./command.js";
 import { HubFaultProxy } from "./fault-proxy.js";
-import { SourcePaseo } from "./source-paseo.js";
+import { SourceZentic } from "./source-zentic.js";
 import { configurationBundleFixture } from "../../test-utils/configuration-bundle.js";
 import { currentProjectConfigurationFiles } from "../../test-utils/current-project-configuration.js";
 
@@ -141,7 +141,7 @@ export interface ShutdownEvidence {
 
 export class HubE2E {
   private root = "";
-  private source: SourcePaseo | undefined;
+  private source: SourceZentic | undefined;
   private workspace = "";
   private hubOrigin = "";
   private proxy: HubFaultProxy | undefined;
@@ -405,8 +405,8 @@ export class HubE2E {
       "        idle_timeout: 5m",
       "        auto_archive: true",
       "        github:",
-      "          connection: getpaseo-github",
-      "          repositories: [getpaseo/paseo]",
+      "          connection: getzentic-github",
+      "          repositories: [getzentic/zentic]",
       "          permissions: {contents: write}",
       "        agent:",
       "          provider: hub-e2e",
@@ -500,14 +500,14 @@ export class HubE2E {
       "    inputs:",
       "      repo:",
       "        type: string",
-      "        choices: [paseo, hub]",
+      "        choices: [zentic, hub]",
       "    values:",
-      "      selected: '${{ paseo.inputs.repo ?? steps.classify.outputs.repo }}'",
+      "      selected: '${{ zentic.inputs.repo ?? steps.classify.outputs.repo }}'",
       "    filters:",
       "      from_users: [real-agent-routing-operator]",
       "    steps:",
       "      - id: classify",
-      "        if: '${{ paseo.inputs.repo == null }}'",
+      "        if: '${{ zentic.inputs.repo == null }}'",
       "        environment: real-agent-routing",
       "        max_runtime: 1h",
       "        idle_timeout: 5m",
@@ -515,7 +515,7 @@ export class HubE2E {
       "        agent:",
       `          provider: ${provider}`,
       ...realAgentOptionsYaml(provider),
-      '        prompt: [{ text: "Classify the request and call finish_execution exactly once with output {repo: hub}. Do not use curl, shell, or direct HTTP. Request: ${{ paseo.prompt }}" }] ',
+      '        prompt: [{ text: "Classify the request and call finish_execution exactly once with output {repo: hub}. Do not use curl, shell, or direct HTTP. Request: ${{ zentic.prompt }}" }] ',
       "        output:",
       "          schema:",
       "            type: object",
@@ -524,9 +524,9 @@ export class HubE2E {
       "            properties:",
       "              repo:",
       "                type: string",
-      "                enum: [paseo, hub]",
-      "      - id: work-paseo",
-      "        if: \"${{ values.selected == 'paseo' }}\"",
+      "                enum: [zentic, hub]",
+      "      - id: work-zentic",
+      "        if: \"${{ values.selected == 'zentic' }}\"",
       "        environment: real-agent-routing",
       "        max_runtime: 1h",
       "        idle_timeout: 5m",
@@ -917,7 +917,7 @@ export class HubE2E {
       if (environment.kind !== "daemon") throw new Error("Expected daemon environment");
       environment.worktree = {
         mode: "branch-off",
-        newBranch: "continuation-${{ paseo.execution.id }}",
+        newBranch: "continuation-${{ zentic.execution.id }}",
       };
     }
     const trigger = configuration.triggers.find(
@@ -1003,7 +1003,7 @@ export class HubE2E {
 
   relayEvidence() {
     const source = this.requireSource();
-    const config = this.paseoConfig(source.paths.packagesRoot, source.paths.daemonHost);
+    const config = this.zenticConfig(source.paths.packagesRoot, source.paths.daemonHost);
     const relayOptions = Object.keys(config.daemon.relay).filter((key) => key !== "enabled");
     return {
       enabled: config.daemon.relay.enabled,
@@ -1238,7 +1238,7 @@ export class HubE2E {
   }
 
   private async persistedDaemonAgents(executionId: string) {
-    const agentsRoot = join(this.requireSource().paths.paseoHome, "agents");
+    const agentsRoot = join(this.requireSource().paths.zenticHome, "agents");
     const files = await readdir(agentsRoot, { recursive: true }).catch(() => []);
     const records = await Promise.all(
       files
@@ -1340,7 +1340,7 @@ export class HubE2E {
   }
 
   private async startResources(): Promise<void> {
-    this.root = await mkdtemp(join(process.env["TMPDIR"] ?? "/tmp", "paseo-hub-e2e-"));
+    this.root = await mkdtemp(join(process.env["TMPDIR"] ?? "/tmp", "zentic-hub-e2e-"));
     this.workspace = join(this.root, "workspace");
     this.acpRecordFile = join(this.root, "acp-records.jsonl");
     this.outputFile = join(this.root, "hub-outputs.jsonl");
@@ -1383,11 +1383,11 @@ export class HubE2E {
       "Hub child to become healthy",
     );
     MACHINE_KEY = (await readFile(this.machineKeyFile, "utf8")).trim();
-    this.source = await SourcePaseo.start({
+    this.source = await SourceZentic.start({
       root: this.root,
-      paseoHome: join(this.root, "paseo-home"),
+      zenticHome: join(this.root, "zentic-home"),
       daemonHost: this.daemonHost,
-      config: ({ packagesRoot, daemonHost }) => this.paseoConfig(packagesRoot, daemonHost),
+      config: ({ packagesRoot, daemonHost }) => this.zenticConfig(packagesRoot, daemonHost),
     });
   }
 
@@ -1403,13 +1403,13 @@ export class HubE2E {
         DATABASE_URL: this.requirePostgres().getConnectionUri(),
         PORT: String(this.hubPort),
         HUB_E2E_MACHINE_KEY_FILE: this.machineKeyFile,
-        PASEO_HUB_APP_URL: this.requireProxy().origin,
-        PASEO_HUB_AUTH_SECRET: "hub-e2e-browser-auth-secret-at-least-32-characters",
-        PASEO_REGISTRATION_MODE: "open",
-        PASEO_ORGANIZATION_CREATION: "open",
-        PASEO_BOOTSTRAP_ORGANIZATION: "",
-        PASEO_BOOTSTRAP_OWNER_EMAIL: "",
-        PASEO_BOOTSTRAP_OWNER_PASSWORD: "",
+        ZENTIC_HUB_APP_URL: this.requireProxy().origin,
+        ZENTIC_HUB_AUTH_SECRET: "hub-e2e-browser-auth-secret-at-least-32-characters",
+        ZENTIC_REGISTRATION_MODE: "open",
+        ZENTIC_ORGANIZATION_CREATION: "open",
+        ZENTIC_BOOTSTRAP_ORGANIZATION: "",
+        ZENTIC_BOOTSTRAP_OWNER_EMAIL: "",
+        ZENTIC_BOOTSTRAP_OWNER_PASSWORD: "",
         HUB_E2E_OUTPUT_FILE: this.outputFile,
       },
     });
@@ -1425,7 +1425,7 @@ export class HubE2E {
     MACHINE_KEY = (await readFile(this.machineKeyFile, "utf8")).trim();
   }
 
-  private paseoConfig(packagesRoot: string, daemonHost: string) {
+  private zenticConfig(packagesRoot: string, daemonHost: string) {
     return {
       version: 1,
       daemon: {
@@ -1577,29 +1577,29 @@ export class HubE2E {
     await this.requirePool().query(
       `insert into slack_connections
          (id, organization_id, team_id, slug, team_name, bot_user_id, bot_access_token, scopes)
-       values ('00000000-0000-4000-8000-0000000000c1', 'hub-e2e', 'paseo', 'paseo',
-               'Paseo', 'UBOT', 'xoxb-test', '["app_mentions:read", "chat:write"]'::jsonb)
+       values ('00000000-0000-4000-8000-0000000000c1', 'hub-e2e', 'zentic', 'zentic',
+               'Zentic', 'UBOT', 'xoxb-test', '["app_mentions:read", "chat:write"]'::jsonb)
        on conflict (team_id) do nothing`,
     );
     await this.requirePool().query(
       `insert into discord_connections
          (id, organization_id, guild_id, slug, guild_name)
-       values ('00000000-0000-4000-8000-0000000000c2', 'hub-e2e', 'paseo', 'paseo', 'Paseo')
+       values ('00000000-0000-4000-8000-0000000000c2', 'hub-e2e', 'zentic', 'zentic', 'Zentic')
        on conflict (guild_id) do nothing`,
     );
     await this.requirePool().query(
       `insert into github_connections
          (id, organization_id, installation_id, slug, account_id, account_login, account_type, status)
-       values ('00000000-0000-4000-8000-0000000000c3', 'hub-e2e', 9001, 'getpaseo',
-               'getpaseo', 'getpaseo', 'Organization', 'active')
+       values ('00000000-0000-4000-8000-0000000000c3', 'hub-e2e', 9001, 'getzentic',
+               'getzentic', 'getzentic', 'Organization', 'active')
        on conflict (installation_id) do nothing`,
     );
     await this.requirePool().query(
       `insert into github_repositories
          (organization_id, connection_id, repository_id, full_name, default_branch)
        values
-         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9101, 'getpaseo/hub', 'main'),
-         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9102, 'getpaseo/paseo', 'main')
+         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9101, 'getzentic/hub', 'main'),
+         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9102, 'getzentic/zentic', 'main')
        on conflict (connection_id, repository_id) do nothing`,
     );
   }
@@ -1624,7 +1624,7 @@ export class HubE2E {
         problem.success &&
         problem.data.issues?.some(
           ({ path, message }) =>
-            path[0] === ".paseo/hub.yml" &&
+            path[0] === ".zentic/hub.yml" &&
             path[1] === "agents" &&
             path.at(-1) === "provider" &&
             /^Provider '.+' is not available$/u.test(message),
@@ -1662,8 +1662,8 @@ export class HubE2E {
     return this.proxy;
   }
 
-  private requireSource(): SourcePaseo {
-    if (!this.source) throw new Error("Source-built Paseo is unavailable");
+  private requireSource(): SourceZentic {
+    if (!this.source) throw new Error("Source-built Zentic is unavailable");
     return this.source;
   }
 

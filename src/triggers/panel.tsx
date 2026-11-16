@@ -870,7 +870,7 @@ function TriggerForm({
                   name="continuationKey"
                   value={form.continuationKey}
                   onChange={text("continuationKey")}
-                  description="A key or expression, for example ${{ paseo.inputs.ticket }}."
+                  description="A key or expression, for example ${{ zentic.inputs.ticket }}."
                   required
                   {...fieldError(errors, "continuationKey")}
                 />
@@ -1111,7 +1111,7 @@ function PromptEditor({
   );
 }
 
-const MERGE_TAGS = ["${{ paseo.prompt }}", "${{ paseo.context }}"] as const;
+const MERGE_TAGS = ["${{ zentic.prompt }}", "${{ zentic.context }}"] as const;
 
 function ProviderCatalogFields({
   form,
@@ -1281,6 +1281,6 @@ function defaultForm(snapshot: TriggerSnapshot): TriggerFormValue {
     githubPermissions: "",
     githubDuration: "1h",
     prompt:
-      "Handle this request in the originating conversation.\n\nWhen hub.reply is available, use it for useful progress updates and your final user-facing response. Call hub.finish_execution once the request is complete.\n\nRequest:\n${{ paseo.prompt }}",
+      "Handle this request in the originating conversation.\n\nWhen hub.reply is available, use it for useful progress updates and your final user-facing response. Call hub.finish_execution once the request is complete.\n\nRequest:\n${{ zentic.prompt }}",
   };
 }

@@ -1,7 +1,7 @@
 # Workflow step authority
 
 Workflow authority is authored on an individual step. It is not a trigger option,
-agent option, sandbox setting, or Paseo daemon feature.
+agent option, sandbox setting, or Zentic daemon feature.
 
 ## Generic connection values
 
@@ -10,11 +10,11 @@ connection:
 
 ```yaml
 env:
-  SOME_TOKEN: "${{ paseo.connections.some-connection.token }}"
+  SOME_TOKEN: "${{ zentic.connections.some-connection.token }}"
 ```
 
 The expression shape is exactly
-`${{ paseo.connections.<connection-slug>.<named-value> }}`. Hub resolves it while
+`${{ zentic.connections.<connection-slug>.<named-value> }}`. Hub resolves it while
 materializing the selected step, after the project and organization connection
 have been verified. The authored expression, not its resolved value, is retained
 in configuration and durable launch data. Resolved values are not placed in logs
@@ -26,9 +26,9 @@ GitHub authority is opt-in and step-scoped:
 
 ```yaml
 github:
-  connection: getpaseo-github
+  connection: getzentic-github
   repositories:
-    - getpaseo/paseo
+    - getzentic/zentic
   permissions:
     contents: write
     pull_requests: write
@@ -74,7 +74,7 @@ application level. GitHub's returned bot user ID and login form the identity
 The reserved Git environment keys cannot be authored alongside a `github` block;
 activation fails instead of making precedence order observable. Authority is
 materialized independently for each running step. Classifier and skipped steps do
-not receive it, and no Git-specific RPC field is sent to Paseo.
+not receive it, and no Git-specific RPC field is sent to Zentic.
 
 Hub persists materialized authority and credential leases before delivering credentials to
 an agent. A Hub restart preserves active executions and their original credentials; recovery
@@ -93,4 +93,4 @@ only until revocation succeeds or the token expires.
 When upgrading from a version with process-owned credentials, let active credentialed runs
 finish before restarting Hub. That version cannot hand its in-memory leases to the replacement.
 
-Public workflow-authority guidance lives in the Paseo repository under `public-docs/`.
+Public workflow-authority guidance lives in the Zentic repository under `public-docs/`.

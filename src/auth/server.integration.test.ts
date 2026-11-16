@@ -327,7 +327,7 @@ describe("account and organization boundary", () => {
       headers: {
         cookie: "session=operator",
         origin: "https://hub.example.test",
-        "x-paseo-trusted-request-origin": "https://hub.example.test",
+        "x-zentic-trusted-request-origin": "https://hub.example.test",
       },
     });
 
@@ -435,13 +435,13 @@ interface ResourceIds {
 const RESOURCE_NAMES = ["machine", "daemon", "execution"] as const;
 const MISSING_RESOURCES = ["missing", "missing", "missing"] as const;
 
-const activeAccounts: PaseoAccounts[] = [];
+const activeAccounts: ZenticAccounts[] = [];
 
 async function startAccounts(
   postgres: StartedPostgreSqlContainer,
   invitationMailer?: InvitationMailer,
-): Promise<PaseoAccounts> {
-  const accounts = await PaseoAccounts.start(postgres, invitationMailer);
+): Promise<ZenticAccounts> {
+  const accounts = await ZenticAccounts.start(postgres, invitationMailer);
   activeAccounts.push(accounts);
   return accounts;
 }
@@ -450,7 +450,7 @@ async function stopAccounts(): Promise<void> {
   await Promise.all(activeAccounts.splice(0).map(async (accounts) => accounts.stop()));
 }
 
-class PaseoAccounts {
+class ZenticAccounts {
   private readonly resources: OrganizationResources;
 
   private constructor(
@@ -465,11 +465,11 @@ class PaseoAccounts {
   static async start(
     postgres: StartedPostgreSqlContainer,
     invitationMailer?: InvitationMailer,
-  ): Promise<PaseoAccounts> {
+  ): Promise<ZenticAccounts> {
     const url = isolatedDatabaseUrl(postgres);
     const database = await createDatabase(url);
     const entitlements = composeEntitlements(database, testDatabaseRuntime(database));
-    return new PaseoAccounts(
+    return new ZenticAccounts(
       url,
       database,
       entitlements,
@@ -581,7 +581,7 @@ class PaseoAccounts {
       publicBaseUrl: "http://localhost:3000",
       configuration: {
         appId: "42",
-        appSlug: "paseo",
+        appSlug: "zentic",
         clientId: "client",
         clientSecret: "secret",
         privateKey: "test-key",
@@ -602,7 +602,7 @@ class PaseoAccounts {
   }
 
   async cliCredential(email: string, organizationId: string): Promise<string> {
-    const token = `paseo_cli_${randomUUID().replaceAll("-", "").slice(0, 12)}_secret`;
+    const token = `zentic_cli_${randomUUID().replaceAll("-", "").slice(0, 12)}_secret`;
     const parts = cliCredentialParts(token);
     await this.query(
       `insert into organization_cli_credentials
@@ -887,7 +887,7 @@ class AccountBrowser {
 
   async createOrganizationWithMetadata(): Promise<number> {
     return (
-      await this.post("/api/auth/paseo/create-organization", {
+      await this.post("/api/auth/zentic/create-organization", {
         name: "Unbounded",
         metadata: { plan: "phase-two" },
       })
@@ -909,7 +909,7 @@ class AccountBrowser {
   }
 
   async state(): Promise<AccountState> {
-    const response = await this.get("/api/auth/paseo/state");
+    const response = await this.get("/api/auth/zentic/state");
     assert.equal(response.status, 200);
     return accountStateSchema.parse(await response.json());
   }
@@ -921,7 +921,7 @@ class AccountBrowser {
   }
 
   async createOrganization(name: string): Promise<string> {
-    const response = await this.post("/api/auth/paseo/create-organization", { name });
+    const response = await this.post("/api/auth/zentic/create-organization", { name });
     assert.equal(response.status, 201);
     return z.object({ organizationId: z.string() }).parse(await response.json()).organizationId;
   }
@@ -931,17 +931,17 @@ class AccountBrowser {
   }
 
   async selectUnavailableOrganization(organizationId: string): Promise<number> {
-    return (await this.post("/api/auth/paseo/select-organization", { organizationId })).status;
+    return (await this.post("/api/auth/zentic/select-organization", { organizationId })).status;
   }
 
   async invite(email: string, role: "admin" | "member"): Promise<InvitationCredential> {
-    const response = await this.post("/api/auth/paseo/create-invitation", { email, role });
+    const response = await this.post("/api/auth/zentic/create-invitation", { email, role });
     assert.equal(response.status, 201);
     return z.object({ id: z.string(), link: z.string() }).parse(await response.json());
   }
 
   async createInvitation(email: string, role: "admin" | "member"): Promise<number> {
-    return (await this.post("/api/auth/paseo/create-invitation", { email, role })).status;
+    return (await this.post("/api/auth/zentic/create-invitation", { email, role })).status;
   }
 
   async createInvitationDenied(
@@ -954,7 +954,7 @@ class AccountBrowser {
     limit: number | null;
     current: number | null;
   }> {
-    const response = await this.post("/api/auth/paseo/create-invitation", { email, role });
+    const response = await this.post("/api/auth/zentic/create-invitation", { email, role });
     assert.equal(response.status, 409);
     return z
       .object({
@@ -977,7 +977,7 @@ class AccountBrowser {
 
   async createInvitationWithTenantOverride(organizationId: string): Promise<number> {
     return (
-      await this.post("/api/auth/paseo/create-invitation", {
+      await this.post("/api/auth/zentic/create-invitation", {
         email: "target@example.com",
         role: "member",
         organizationId,
@@ -986,11 +986,11 @@ class AccountBrowser {
   }
 
   async cancelInvitation(invitationId: string): Promise<number> {
-    return (await this.post("/api/auth/paseo/cancel-invitation", { invitationId })).status;
+    return (await this.post("/api/auth/zentic/cancel-invitation", { invitationId })).status;
   }
 
   async acceptInvitation(invitationId: string): Promise<number> {
-    return (await this.post("/api/auth/paseo/accept-invitation", { invitationId })).status;
+    return (await this.post("/api/auth/zentic/accept-invitation", { invitationId })).status;
   }
 
   async acceptInvitationSuccessfully(invitationId: string): Promise<void> {
@@ -999,15 +999,15 @@ class AccountBrowser {
 
   async acceptConcurrently(invitationId: string): Promise<number[]> {
     const responses = await Promise.all([
-      this.post("/api/auth/paseo/accept-invitation", { invitationId }),
-      this.post("/api/auth/paseo/accept-invitation", { invitationId }),
+      this.post("/api/auth/zentic/accept-invitation", { invitationId }),
+      this.post("/api/auth/zentic/accept-invitation", { invitationId }),
     ]);
     return responses.map(({ status }) => status);
   }
 
   async changeRole(memberId: string, role: "owner" | "admin" | "member"): Promise<number> {
     return (
-      await this.post("/api/auth/paseo/change-member-role", {
+      await this.post("/api/auth/zentic/change-member-role", {
         memberId,
         role,
       })
@@ -1022,29 +1022,29 @@ class AccountBrowser {
   }
 
   async removeMember(memberId: string): Promise<number> {
-    return (await this.post("/api/auth/paseo/remove-member", { memberId })).status;
+    return (await this.post("/api/auth/zentic/remove-member", { memberId })).status;
   }
 
   async lastOwnerRace(memberId: string): Promise<number[]> {
     const responses = await Promise.all([
-      this.post("/api/auth/paseo/change-member-role", { memberId, role: "member" }),
-      this.post("/api/auth/paseo/remove-member", { memberId }),
+      this.post("/api/auth/zentic/change-member-role", { memberId, role: "member" }),
+      this.post("/api/auth/zentic/remove-member", { memberId }),
     ]);
     return responses.map(({ status }) => status);
   }
 
   async teamMutationStatuses(): Promise<number[]> {
     const responses = await Promise.all([
-      this.post("/api/auth/paseo/create-invitation", {
+      this.post("/api/auth/zentic/create-invitation", {
         email: "target@example.com",
         role: "member",
       }),
-      this.post("/api/auth/paseo/cancel-invitation", { invitationId: randomUUID() }),
-      this.post("/api/auth/paseo/change-member-role", {
+      this.post("/api/auth/zentic/cancel-invitation", { invitationId: randomUUID() }),
+      this.post("/api/auth/zentic/change-member-role", {
         memberId: randomUUID(),
         role: "member",
       }),
-      this.post("/api/auth/paseo/remove-member", { memberId: randomUUID() }),
+      this.post("/api/auth/zentic/remove-member", { memberId: randomUUID() }),
     ]);
     return responses.map(({ status }) => status);
   }
@@ -1073,7 +1073,7 @@ class AccountBrowser {
 
   private get(path: string): Promise<Response> {
     const request = this.request(path);
-    if (path.startsWith("/api/auth/paseo/")) {
+    if (path.startsWith("/api/auth/zentic/")) {
       assert.ok(this.auth.browserAccount !== undefined);
       return this.auth.browserAccount(request);
     }
@@ -1091,7 +1091,7 @@ class AccountBrowser {
       },
       body: JSON.stringify(body),
     });
-    if (path.startsWith("/api/auth/paseo/")) {
+    if (path.startsWith("/api/auth/zentic/")) {
       assert.ok(this.auth.browserAccount !== undefined);
       return this.auth.browserAccount(request);
     }

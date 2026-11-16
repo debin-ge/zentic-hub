@@ -895,7 +895,7 @@ function expectInstallPage(response: Response): string {
   const installPage = redirectLocation(response);
   assert.equal(
     `${installPage.origin}${installPage.pathname}`,
-    "https://github.test/apps/paseo/installations/new",
+    "https://github.test/apps/zentic/installations/new",
   );
   return installPage.toString();
 }
@@ -1294,7 +1294,7 @@ function createConnections(options: CreateConnectionsOptions): ProviderFixture {
         publicBaseUrl: "https://hub.example.test",
         configuration: {
           appId: "42",
-          appSlug: "paseo",
+          appSlug: "zentic",
           clientId: "client",
           clientSecret: "secret",
           webhookSecret: TEST_WEBHOOK_SECRET,

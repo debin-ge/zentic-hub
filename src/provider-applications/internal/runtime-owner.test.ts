@@ -808,7 +808,7 @@ function downstreamRegistration(
             token: `authority:${id}`,
             expiresAt: Date.now() + 60_000,
             botUserId: 1,
-            botLogin: "paseo-bot",
+            botLogin: "zentic-bot",
           });
         },
         revoke: () => {

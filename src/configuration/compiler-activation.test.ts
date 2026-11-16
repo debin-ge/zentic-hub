@@ -107,7 +107,7 @@ describe("compiled workflow activation", () => {
       [
         "docker-static",
         {
-          environments: [{ name: "docker", kind: "docker", image: "paseo/test" }],
+          environments: [{ name: "docker", kind: "docker", image: "zentic/test" }],
           triggers: [triggerConfiguration("docker-static", "docker")],
         },
         /environment docker.*daemon/iu,
@@ -115,7 +115,7 @@ describe("compiled workflow activation", () => {
       [
         "fly-static",
         {
-          environments: [{ name: "fly", kind: "fly", image: "paseo/test" }],
+          environments: [{ name: "fly", kind: "fly", image: "zentic/test" }],
           triggers: [triggerConfiguration("fly-static", "fly")],
         },
         /environment fly.*daemon/iu,
@@ -125,11 +125,11 @@ describe("compiled workflow activation", () => {
         {
           environments: [
             { name: "runner", kind: "daemon", daemon: "daemon-runner-0", cwd: "/repo" },
-            { name: "docker", kind: "docker", image: "paseo/test" },
+            { name: "docker", kind: "docker", image: "zentic/test" },
           ],
           triggers: [
             {
-              ...triggerConfiguration("dynamic", "${{ paseo.inputs.runner }}"),
+              ...triggerConfiguration("dynamic", "${{ zentic.inputs.runner }}"),
               inputs: { runner: { type: "string", choices: ["runner", "docker"] } },
             },
           ],

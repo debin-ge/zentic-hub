@@ -22,16 +22,16 @@ const activeRelationshipSchema = z.object({
   credential: z.object({ secret: z.string().min(1) }),
   transport: z.object({ webSocketUrl: z.string().url() }),
 });
-interface SourcePaseoOptions {
+interface SourceZenticOptions {
   root?: string;
-  paseoHome?: string;
+  zenticHome?: string;
   daemonHost?: string;
-  config?: (paths: SourcePaseoPaths) => unknown;
+  config?: (paths: SourceZenticPaths) => unknown;
 }
 
-export interface SourcePaseoPaths {
+export interface SourceZenticPaths {
   packagesRoot: string;
-  paseoHome: string;
+  zenticHome: string;
   daemonHost: string;
 }
 
@@ -41,13 +41,13 @@ interface RememberedAuthority {
   webSocketUrl: string;
 }
 
-export interface SourcePaseoStopEvidence {
+export interface SourceZenticStopEvidence {
   durationMs: number;
   ownedProcesses: string[];
   leakedProcesses: number[];
 }
 
-export class SourcePaseo {
+export class SourceZentic {
   private daemon: ChildProcess | undefined;
   private cli: ChildProcess | undefined;
   private readonly daemonOutput: string[] = [];
@@ -57,26 +57,26 @@ export class SourcePaseo {
 
   private constructor(
     private readonly root: string,
-    readonly paths: SourcePaseoPaths,
+    readonly paths: SourceZenticPaths,
     ownsRoot: boolean,
   ) {
     this.ownsRoot = ownsRoot;
   }
 
-  static async start(options: SourcePaseoOptions = {}): Promise<SourcePaseo> {
+  static async start(options: SourceZenticOptions = {}): Promise<SourceZentic> {
     const ownsRoot = options.root === undefined;
-    const root = options.root ?? (await mkdtemp(join(tmpdir(), "paseo-source-e2e-")));
+    const root = options.root ?? (await mkdtemp(join(tmpdir(), "zentic-source-e2e-")));
     try {
-      const packagesRoot = await packagePaseoArtifacts(resolvePaseoWorktree());
-      const paseoHome = options.paseoHome ?? join(root, "paseo-home");
+      const packagesRoot = await packageZenticArtifacts(resolveZenticWorktree());
+      const zenticHome = options.zenticHome ?? join(root, "zentic-home");
       const daemonHost = options.daemonHost ?? `127.0.0.1:${await availablePort()}`;
-      await mkdir(paseoHome, { recursive: true });
-      const paths = { packagesRoot, paseoHome, daemonHost };
+      await mkdir(zenticHome, { recursive: true });
+      const paths = { packagesRoot, zenticHome, daemonHost };
       await writeFile(
-        join(paseoHome, "config.json"),
+        join(zenticHome, "config.json"),
         JSON.stringify(options.config?.(paths) ?? defaultConfig(daemonHost), null, 2),
       );
-      const source = new SourcePaseo(root, paths, ownsRoot);
+      const source = new SourceZentic(root, paths, ownsRoot);
       await source.startDaemon();
       return source;
     } catch (error) {
@@ -112,10 +112,10 @@ export class SourcePaseo {
 
   async runFrom(args: string[], cwd: string): Promise<Record<string, unknown>> {
     const result = await runCommand(
-      join(this.paths.packagesRoot, "node_modules/.bin/paseo"),
+      join(this.paths.packagesRoot, "node_modules/.bin/zentic"),
       args,
       cwd,
-      sourceEnvironment(this.paths.paseoHome),
+      sourceEnvironment(this.paths.zenticHome),
     );
     return parseCliResult(result.stdout);
   }
@@ -125,7 +125,7 @@ export class SourcePaseo {
       process.execPath,
       [TIMELINE_READER, this.paths.packagesRoot, this.paths.daemonHost, agentId],
       this.paths.packagesRoot,
-      sourceEnvironment(this.paths.paseoHome),
+      sourceEnvironment(this.paths.zenticHome),
     );
     const value: unknown = JSON.parse(result.stdout);
     return z.array(z.unknown()).parse(value);
@@ -175,7 +175,7 @@ export class SourcePaseo {
       const socket = new WebSocket(authority.webSocketUrl, {
         headers: {
           authorization: `Bearer ${authority.credential}`,
-          "x-paseo-daemon-id": authority.daemonId,
+          "x-zentic-daemon-id": authority.daemonId,
         },
       });
       const timeout = setTimeout(() => {
@@ -202,7 +202,7 @@ export class SourcePaseo {
     return this.daemonOutput.some((line) => /relay.+(?:connect|dial|socket)/iu.test(line));
   }
 
-  async stop(): Promise<SourcePaseoStopEvidence> {
+  async stop(): Promise<SourceZenticStopEvidence> {
     const startedAt = performance.now();
     await stopProcess(this.cli);
     const family = await processFamily(this.daemon?.pid);
@@ -221,7 +221,7 @@ export class SourcePaseo {
     let active: z.infer<typeof activeRelationshipSchema> | undefined;
     await observe(async () => {
       const value: unknown = JSON.parse(
-        await readFile(join(this.paths.paseoHome, "hub-relationship.json"), "utf8"),
+        await readFile(join(this.paths.zenticHome, "hub-relationship.json"), "utf8"),
       );
       const parsed = activeRelationshipSchema.safeParse(value);
       if (!parsed.success) return false;
@@ -248,14 +248,14 @@ export class SourcePaseo {
       [
         join(
           this.paths.packagesRoot,
-          "node_modules/@getpaseo/server/dist/scripts/supervisor-entrypoint.js",
+          "node_modules/@getzentic/server/dist/scripts/supervisor-entrypoint.js",
         ),
       ],
       {
         cwd: this.paths.packagesRoot,
         env: {
-          ...sourceEnvironment(this.paths.paseoHome),
-          PASEO_LISTEN: this.paths.daemonHost,
+          ...sourceEnvironment(this.paths.zenticHome),
+          ZENTIC_LISTEN: this.paths.daemonHost,
         },
         stdio: ["ignore", "pipe", "pipe"],
         detached: true,
@@ -282,10 +282,10 @@ export class SourcePaseo {
   }
 }
 
-export function resolvePaseoWorktree(): string {
-  const configured = process.env["PASEO_E2E_WORKTREE"];
+export function resolveZenticWorktree(): string {
+  const configured = process.env["ZENTIC_E2E_WORKTREE"];
   if (!configured) {
-    throw new Error("PASEO_E2E_WORKTREE must name the exact source checkout under test");
+    throw new Error("ZENTIC_E2E_WORKTREE must name the exact source checkout under test");
   }
   return resolve(configured);
 }
@@ -297,7 +297,7 @@ export function resolvePaseoWorktree(): string {
  * checkout cannot change while a suite runs, so each test after the first was paying to rebuild
  * a byte-identical directory. On a loaded runner that repeat was enough to exhaust the 120s
  * start budget in `beforeEach`. The tree is only ever read once built — the daemon writes to
- * `PASEO_HOME`, which stays per-test — so one copy serves them all.
+ * `ZENTIC_HOME`, which stays per-test — so one copy serves them all.
  *
  * The promise is what's memoized, so concurrent starts wait on one build instead of racing.
  */
@@ -309,13 +309,13 @@ const packagedArtifacts = new Map<string, Promise<string>>();
  * the build inside the test's own timeout. `globalSetup` builds ahead of the workers and passes
  * the path down through here.
  */
-const PREBUILT = "PASEO_E2E_PACKAGES";
+const PREBUILT = "ZENTIC_E2E_PACKAGES";
 
-export function packagePaseoArtifacts(paseoRoot: string): Promise<string> {
+export function packageZenticArtifacts(zenticRoot: string): Promise<string> {
   const prebuilt = process.env[PREBUILT];
   if (prebuilt !== undefined && prebuilt !== "") return Promise.resolve(prebuilt);
-  const built = packagedArtifacts.get(paseoRoot) ?? buildPaseoArtifacts(paseoRoot);
-  packagedArtifacts.set(paseoRoot, built);
+  const built = packagedArtifacts.get(zenticRoot) ?? buildZenticArtifacts(zenticRoot);
+  packagedArtifacts.set(zenticRoot, built);
   return built;
 }
 
@@ -323,23 +323,23 @@ export function packagePaseoArtifacts(paseoRoot: string): Promise<string> {
  * Builds the artifacts and publishes them to every process this one goes on to spawn. Returns
  * nothing to clean up: the tree is removed when the process that built it exits.
  */
-export async function prebuildPaseoArtifacts(paseoRoot: string): Promise<string> {
-  const packages = await packagePaseoArtifacts(paseoRoot);
+export async function prebuildZenticArtifacts(zenticRoot: string): Promise<string> {
+  const packages = await packageZenticArtifacts(zenticRoot);
   process.env[PREBUILT] = packages;
   return packages;
 }
 
-async function buildPaseoArtifacts(paseoRoot: string): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "paseo-packaged-"));
+async function buildZenticArtifacts(zenticRoot: string): Promise<string> {
+  const root = await mkdtemp(join(tmpdir(), "zentic-packaged-"));
   removeWhenTheProcessExits(root);
-  const packages = join(root, "paseo-packages");
-  const tarballs = join(root, "paseo-tarballs");
+  const packages = join(root, "zentic-packages");
+  const tarballs = join(root, "zentic-tarballs");
   await Promise.all([mkdir(packages), mkdir(tarballs)]);
   for (const workspace of ["protocol", "relay", "highlight", "plugin", "client", "server", "cli"]) {
     await runCommand(
       "npm",
       ["pack", "--ignore-scripts", "--pack-destination", tarballs],
-      join(paseoRoot, "packages", workspace),
+      join(zenticRoot, "packages", workspace),
       {},
     );
   }
@@ -361,18 +361,18 @@ function removeWhenTheProcessExits(directory: string): void {
   });
 }
 
-export function sourceEnvironment(paseoHome: string): NodeJS.ProcessEnv {
+export function sourceEnvironment(zenticHome: string): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    PASEO_AGENT_ID: undefined,
-    PASEO_WORKSPACE_ID: undefined,
-    PASEO_HOME: paseoHome,
-    PASEO_NODE_INSPECT: "0",
-    PASEO_PAIRING_QR: "0",
-    PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: "0",
-    PASEO_DICTATION_ENABLED: "0",
-    PASEO_VOICE_MODE_ENABLED: "0",
-    PASEO_LOG_FORMAT: "json",
+    ZENTIC_AGENT_ID: undefined,
+    ZENTIC_WORKSPACE_ID: undefined,
+    ZENTIC_HOME: zenticHome,
+    ZENTIC_NODE_INSPECT: "0",
+    ZENTIC_PAIRING_QR: "0",
+    ZENTIC_LOCAL_SPEECH_AUTO_DOWNLOAD: "0",
+    ZENTIC_DICTATION_ENABLED: "0",
+    ZENTIC_VOICE_MODE_ENABLED: "0",
+    ZENTIC_LOG_FORMAT: "json",
   };
 }
 

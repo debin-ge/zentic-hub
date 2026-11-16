@@ -179,9 +179,9 @@ describe("daemon enrollment and execution", () => {
     });
     assert.deepEqual(agent.env, {
       USER_DEFINED: "yes",
-      PASEO_AGENT_PROVIDER: "opencode",
-      PASEO_AGENT_MODE: "full-access",
-      PASEO_HUB_CONFIG_JSON: JSON.stringify({
+      ZENTIC_AGENT_PROVIDER: "opencode",
+      ZENTIC_AGENT_MODE: "full-access",
+      ZENTIC_HUB_CONFIG_JSON: JSON.stringify({
         triggers: [{ name: "discord-ping" }],
       }),
     });
@@ -260,7 +260,7 @@ describe("daemon enrollment and execution", () => {
     assert.equal(launch.modeId, undefined);
     assert.deepEqual(launch.providerOptions, options);
     assert.deepEqual(persisted.launchIntent?.agent, { provider: "codex", options });
-    assert.equal(isRecord(launch.env) ? launch.env["PASEO_AGENT_MODE"] : undefined, undefined);
+    assert.equal(isRecord(launch.env) ? launch.env["ZENTIC_AGENT_MODE"] : undefined, undefined);
   });
 
   it("preserves the ordinary daemon provider-option validation error", async () => {
@@ -332,7 +332,7 @@ describe("daemon enrollment and execution", () => {
         type: "object",
         additionalProperties: false,
         required: ["repo"],
-        properties: { repo: { type: "string", enum: ["paseo", "hub"] } },
+        properties: { repo: { type: "string", enum: ["zentic", "hub"] } },
       },
     });
 
@@ -355,11 +355,11 @@ describe("daemon enrollment and execution", () => {
       required: ["output"],
       properties: {
         output: {
-          $id: "urn:paseo:hub:finish-execution-output",
+          $id: "urn:zentic:hub:finish-execution-output",
           type: "object",
           additionalProperties: false,
           required: ["repo"],
-          properties: { repo: { type: "string", enum: ["paseo", "hub"] } },
+          properties: { repo: { type: "string", enum: ["zentic", "hub"] } },
         },
       },
     });
@@ -391,7 +391,7 @@ describe("daemon enrollment and execution", () => {
     );
 
     const completion = await hub.callExecutionTool(classifier.id, "finish_execution", {
-      output: { environment: "paseo", agent: "codex" },
+      output: { environment: "zentic", agent: "codex" },
     });
     assert.equal(completion["error"], undefined);
     assert.equal(toolResultIsError(completion), undefined, JSON.stringify(completion));
@@ -400,7 +400,7 @@ describe("daemon enrollment and execution", () => {
     assert.deepEqual(await hub.workflowExecutionState(classifier.id), {
       executionStatus: "succeeded",
       stepStatus: "succeeded",
-      stepOutput: { environment: "paseo", agent: "codex" },
+      stepOutput: { environment: "zentic", agent: "codex" },
       stepFailure: null,
       runStatus: "running",
       runFailure: null,
@@ -409,7 +409,7 @@ describe("daemon enrollment and execution", () => {
     const worker = await hub.waitForPendingExecution();
     const workerLaunch = hub.createdAgentLaunch();
     assert.equal(workerLaunch.provider, "codex");
-    assert.equal(workerLaunch.cwd, "/workspace/paseo");
+    assert.equal(workerLaunch.cwd, "/workspace/zentic");
     assert.equal(workerLaunch.prompt, "<@UBOT> investigate the routing failure");
     assert.equal(workerLaunch.thinkingOptionId, "xhigh");
     assert.deepEqual(workerLaunch.providerOptions, {
@@ -505,11 +505,11 @@ describe("daemon enrollment and execution", () => {
     await hub.connectDaemon();
     const handedOff = await hub.handoff({
       env: {
-        SOME_TOKEN: "prefix-${{ paseo.connections.some-connection.token }}",
+        SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
       },
       github: {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { contents: "write", pull_requests: "write" },
         durationMs: 60 * 60 * 1000,
       },
@@ -518,14 +518,14 @@ describe("daemon enrollment and execution", () => {
 
     const persisted = await hub.execution(handedOff.execution.id);
     const persistedIntent = JSON.stringify(persisted.launchIntent);
-    assert.match(persistedIntent, /paseo\.connections\.some-connection\.token/iu);
+    assert.match(persistedIntent, /zentic\.connections\.some-connection\.token/iu);
     assert.doesNotMatch(persistedIntent, /resolved-secret|durable-scoped-token/iu);
     assert.deepEqual(persisted.launchIntent?.env, {
-      SOME_TOKEN: "prefix-${{ paseo.connections.some-connection.token }}",
+      SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     assert.deepEqual(persisted.launchIntent?.github, {
-      connection: "getpaseo-github",
-      repositories: ["getpaseo/paseo"],
+      connection: "getzentic-github",
+      repositories: ["getzentic/zentic"],
       permissions: { contents: "write", pull_requests: "write" },
       durationMs: 60 * 60 * 1000,
     });
@@ -539,8 +539,8 @@ describe("daemon enrollment and execution", () => {
     assert.deepEqual(hub.authorityMintInputs(), [
       {
         projectId: "00000000-0000-4000-8000-000000000001",
-        connectionSlug: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connectionSlug: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { contents: "write", pull_requests: "write" },
       },
     ]);
@@ -554,8 +554,8 @@ describe("daemon enrollment and execution", () => {
     const settings = {
       continuation: { key: "same-thread", compatibility: { target: "same-repository" } },
       github: {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { contents: "write" as const },
         durationMs: 60 * 60 * 1000,
       },
@@ -615,8 +615,8 @@ describe("daemon enrollment and execution", () => {
         timeoutMs: 10_000,
         continuation: { key: "bounded-thread", compatibility: { target: "same-repository" } },
         github: {
-          connection: "getpaseo-github",
-          repositories: ["getpaseo/paseo"],
+          connection: "getzentic-github",
+          repositories: ["getzentic/zentic"],
           permissions: { contents: "write" as const },
           durationMs: 60 * 60 * 1000,
         },
@@ -645,8 +645,8 @@ describe("daemon enrollment and execution", () => {
     await hub.connectDaemon();
     const handedOff = await hub.handoff({
       github: {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { contents: "write" },
         durationMs: 60 * 60 * 1000,
       },
@@ -671,10 +671,10 @@ describe("daemon enrollment and execution", () => {
     hub.hangAuthorityMintPermanently();
     const dispatch = hub.beginDispatch({
       startupTimeoutMs: 30_000,
-      env: { TOKEN: "${{ paseo.connections.some-connection.token }}" },
+      env: { TOKEN: "${{ zentic.connections.some-connection.token }}" },
       github: {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },

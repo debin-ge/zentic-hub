@@ -44,8 +44,8 @@ export const FIXTURE_BILLING_PRODUCTS: readonly FixtureBillingProduct[] = [
     name: "Free",
     active: true,
     metadata: {
-      paseo_plan: "true",
-      paseo_plan_slug: "free",
+      zentic_plan: "true",
+      zentic_plan_slug: "free",
       ent_seats_max: "1",
       ent_can_invite: "false",
       ent_executions_monthly_limit: "50",
@@ -53,11 +53,11 @@ export const FIXTURE_BILLING_PRODUCTS: readonly FixtureBillingProduct[] = [
   },
   {
     id: "prod_fixture_hosted",
-    name: "Paseo Hub",
+    name: "Zentic Hub",
     active: true,
     metadata: {
-      paseo_plan: "true",
-      paseo_plan_slug: "hosted",
+      zentic_plan: "true",
+      zentic_plan_slug: "hosted",
       ent_seats_max: "unlimited",
       ent_can_invite: "true",
       ent_executions_monthly_limit: "unlimited",
@@ -103,7 +103,7 @@ export class FixtureStripeCatalogSource {
 
   async listProducts(): Promise<FixtureBillingProduct[]> {
     return [...this.products.values()].filter(
-      (product) => product.metadata["paseo_plan"] === "true",
+      (product) => product.metadata["zentic_plan"] === "true",
     );
   }
 

@@ -39,8 +39,8 @@ export class HubFaultProxy {
       void this.forwardHttp(request, response);
     });
     this.sockets.on("headers", (headers, request) => {
-      if (request.headers["x-paseo-session-protocol"] === "1") {
-        headers.push("x-paseo-session-protocol: 1");
+      if (request.headers["x-zentic-session-protocol"] === "1") {
+        headers.push("x-zentic-session-protocol: 1");
       }
     });
     this.server.on("upgrade", (request, socket, head) => this.upgrade(request, socket, head));
@@ -209,7 +209,7 @@ export class HubFaultProxy {
       this.events.push(
         `${generation}: daemon accepted ${
           request.url ?? "/"
-        } daemon=${String(request.headers["x-paseo-daemon-id"])}`,
+        } daemon=${String(request.headers["x-zentic-daemon-id"])}`,
       );
       const target = new URL(request.url ?? "/", this.targetOrigin);
       target.protocol = "ws:";

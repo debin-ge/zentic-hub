@@ -5,10 +5,10 @@ import { compiledConfigurationHash } from "./compiler.js";
 
 const hub = `
 environments:
-  paseo:
+  zentic:
     kind: daemon
     daemon: local
-    cwd: /workspace/paseo
+    cwd: /workspace/zentic
   hub:
     kind: daemon
     daemon: local
@@ -34,27 +34,27 @@ inputs:
   repo:
     type: string
     required: true
-    choices: [paseo, hub]
+    choices: [zentic, hub]
   agent:
     type: string
     required: true
     choices: [codex-safe, claude]
 steps:
   - id: work
-    environment: \${{ paseo.inputs.repo }}
+    environment: \${{ zentic.inputs.repo }}
     max_runtime: 30m
     idle_timeout: 5m
-    agent: \${{ paseo.inputs.agent }}
+    agent: \${{ zentic.inputs.agent }}
     prompt:
       - include: partials/shared.md
-      - text: "Request: \${{ paseo.prompt }}"
+      - text: "Request: \${{ zentic.prompt }}"
 `;
 
 function canonicalFiles() {
   return [
-    { path: ".paseo/workflows/route.yml", content: workflow },
-    { path: ".paseo/workflows/partials/shared.md", content: "Keep context exact." },
-    { path: ".paseo/hub.yml", content: hub },
+    { path: ".zentic/workflows/route.yml", content: workflow },
+    { path: ".zentic/workflows/partials/shared.md", content: "Keep context exact." },
+    { path: ".zentic/hub.yml", content: hub },
   ];
 }
 
@@ -69,7 +69,7 @@ function filesWithWorkflow(content: string) {
 
 function filesWithHub(content: string) {
   const files = canonicalFiles();
-  const index = files.findIndex(({ path }) => path === ".paseo/hub.yml");
+  const index = files.findIndex(({ path }) => path === ".zentic/hub.yml");
   const current = files[index];
   if (current === undefined) throw new Error("canonical Hub fixture is missing");
   files[index] = { path: current.path, content };
@@ -98,7 +98,7 @@ describe("Hub configuration bundle", () => {
         (error) =>
           hasBundleIssue(
             error,
-            ".paseo/hub.yml.name",
+            ".zentic/hub.yml.name",
             /lowercase letters, numbers, and single hyphens|too big/iu,
           ),
       );
@@ -112,13 +112,13 @@ describe("Hub configuration bundle", () => {
 
     assert.deepEqual(
       bundle.configuration.environments.map(({ name }) => name),
-      ["hub", "paseo"],
+      ["hub", "zentic"],
     );
-    assert.equal(trigger.sourceFile, ".paseo/workflows/route.yml");
-    assert.equal(step.environment, "${{ paseo.inputs.repo }}");
+    assert.equal(trigger.sourceFile, ".zentic/workflows/route.yml");
+    assert.equal(step.environment, "${{ zentic.inputs.repo }}");
     assert.ok("selector" in step.agent);
     if (!("selector" in step.agent)) return;
-    assert.equal(step.agent.selector, "${{ paseo.inputs.agent }}");
+    assert.equal(step.agent.selector, "${{ zentic.inputs.agent }}");
     assert.deepEqual(Object.keys(step.agent.choices), ["claude", "codex-safe"]);
     assert.deepEqual(step.agent.choices["codex-safe"]?.options, {
       sandbox_workspace_write: {
@@ -128,7 +128,7 @@ describe("Hub configuration bundle", () => {
     });
     assert.deepEqual(step.prompt[0], {
       kind: "partial",
-      path: ".paseo/workflows/partials/shared.md",
+      path: ".zentic/workflows/partials/shared.md",
       content: "Keep context exact.",
       contentHash: "4d64ca5298d18aaf016856e6579d80ec097e276c0acf1fa061689b0643844b8d",
     });
@@ -136,24 +136,24 @@ describe("Hub configuration bundle", () => {
 
   it("rejects monolithic triggers with a direct migration error", () => {
     assert.throws(
-      () => compileHubBundle([{ path: ".paseo/hub.yml", content: `${hub}\ntriggers: []\n` }]),
+      () => compileHubBundle([{ path: ".zentic/hub.yml", content: `${hub}\ntriggers: []\n` }]),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/hub.yml.triggers",
-          /move each trigger to \.paseo\/workflows\/<workflow>\.yml/iu,
+          ".zentic/hub.yml.triggers",
+          /move each trigger to \.zentic\/workflows\/<workflow>\.yml/iu,
         ),
     );
   });
 
   it("rejects a resource document without a direct workflow document", () => {
     assert.throws(
-      () => compileHubBundle([{ path: ".paseo/hub.yml", content: hub }]),
+      () => compileHubBundle([{ path: ".zentic/hub.yml", content: hub }]),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/workflows",
-          /at least one direct \.paseo\/workflows\/<workflow>\.yml/iu,
+          ".zentic/workflows",
+          /at least one direct \.zentic\/workflows\/<workflow>\.yml/iu,
         ),
     );
   });
@@ -161,7 +161,7 @@ describe("Hub configuration bundle", () => {
   it("rejects unknown, non-finite, and object-valued dynamic authority", () => {
     const cases = [
       {
-        source: workflow.replace("choices: [paseo, hub]", "choices: [paseo, missing]"),
+        source: workflow.replace("choices: [zentic, hub]", "choices: [zentic, missing]"),
         expected: /environment choice missing is not a configured environment/iu,
       },
       {
@@ -170,8 +170,8 @@ describe("Hub configuration bundle", () => {
       },
       {
         source: workflow.replace(
-          "agent: ${{ paseo.inputs.agent }}",
-          "agent:\n      provider: ${{ paseo.inputs.agent }}",
+          "agent: ${{ zentic.inputs.agent }}",
+          "agent:\n      provider: ${{ zentic.inputs.agent }}",
         ),
         expected: /dynamic inline agent configurations are not allowed/iu,
       },
@@ -186,10 +186,10 @@ describe("Hub configuration bundle", () => {
     const second = workflow.replace("route-request", "another-request");
     const left = compileHubBundle([
       ...canonicalFiles(),
-      { path: ".paseo/workflows/a.yml", content: second },
+      { path: ".zentic/workflows/a.yml", content: second },
     ]);
     const right = compileHubBundle([
-      { path: ".paseo/workflows/a.yml", content: second },
+      { path: ".zentic/workflows/a.yml", content: second },
       ...canonicalFiles().toReversed(),
     ]);
 
@@ -209,13 +209,13 @@ describe("Hub configuration bundle", () => {
       () =>
         compileHubBundle([
           ...canonicalFiles(),
-          { path: ".paseo/workflows/duplicate.yml", content: workflow },
+          { path: ".zentic/workflows/duplicate.yml", content: workflow },
         ]),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/workflows/route.yml.name",
-          /\.paseo\/workflows\/duplicate\.yml/u,
+          ".zentic/workflows/route.yml.name",
+          /\.zentic\/workflows\/duplicate\.yml/u,
         ),
     );
   });
@@ -225,16 +225,16 @@ describe("Hub configuration bundle", () => {
     assert.throws(
       () => compileHubBundle(filesWithWorkflow(malformedWorkflow)),
       (error) =>
-        hasBundleIssue(error, ".paseo/workflows/route.yml.name", /expected.*string|required/iu),
+        hasBundleIssue(error, ".zentic/workflows/route.yml.name", /expected.*string|required/iu),
     );
 
-    const malformedEnvironment = hub.replace("    cwd: /workspace/paseo\n", "");
+    const malformedEnvironment = hub.replace("    cwd: /workspace/zentic\n", "");
     assert.throws(
       () => compileHubBundle(filesWithHub(malformedEnvironment)),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/hub.yml.environments.paseo.cwd",
+          ".zentic/hub.yml.environments.zentic.cwd",
           /expected.*string|required/iu,
         ),
     );
@@ -242,15 +242,15 @@ describe("Hub configuration bundle", () => {
 
   it("attributes malformed expressions to their conceptual authored workflow field", () => {
     const malformedExpression = workflow.replace(
-      "    agent: ${{ paseo.inputs.agent }}",
-      "    agent: ${{ paseo.inputs.agent + }}",
+      "    agent: ${{ zentic.inputs.agent }}",
+      "    agent: ${{ zentic.inputs.agent + }}",
     );
     assert.throws(
       () => compileHubBundle(filesWithWorkflow(malformedExpression)),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/workflows/route.yml.steps.work.agent",
+          ".zentic/workflows/route.yml.steps.work.agent",
           /expression|unexpected|expected/iu,
         ),
     );
@@ -258,16 +258,16 @@ describe("Hub configuration bundle", () => {
 
   it("attributes unsupported worktree expressions to the exact Hub source field", () => {
     const unsupported = hub.replace(
-      "    cwd: /workspace/paseo",
-      '    cwd: /workspace/paseo\n    worktree:\n      mode: branch-off\n      newBranch: "trigger-${{ paseo.event.github.delivery_id }}"',
+      "    cwd: /workspace/zentic",
+      '    cwd: /workspace/zentic\n    worktree:\n      mode: branch-off\n      newBranch: "trigger-${{ zentic.event.github.delivery_id }}"',
     );
     assert.throws(
       () => compileHubBundle(filesWithHub(unsupported)),
       (error) =>
         hasBundleIssue(
           error,
-          ".paseo/hub.yml.environments.paseo.worktree.newBranch",
-          /unsupported path paseo\.event\.github\.delivery_id/iu,
+          ".zentic/hub.yml.environments.zentic.worktree.newBranch",
+          /unsupported path zentic\.event\.github\.delivery_id/iu,
         ),
     );
   });
@@ -278,19 +278,19 @@ describe("Hub configuration bundle", () => {
         compileHubBundle([
           ...canonicalFiles(),
           {
-            path: ".paseo/workflows/partials/orphan.md",
+            path: ".zentic/workflows/partials/orphan.md",
             content: "Never silently injected.",
           },
         ]),
-      (error) => hasBundleIssue(error, ".paseo/workflows/partials/orphan.md", /not referenced/iu),
+      (error) => hasBundleIssue(error, ".zentic/workflows/partials/orphan.md", /not referenced/iu),
     );
   });
 
   it.each([
-    [".paseo/hub.toml", "TOML is not accepted"],
-    [".paseo/workflows/nested/run.yml", "direct child"],
-    [".paseo/workflows/run.yaml", "must use the .yml extension"],
-    [".paseo/workflows/partials/safety.txt", "must use the .md extension"],
+    [".zentic/hub.toml", "TOML is not accepted"],
+    [".zentic/workflows/nested/run.yml", "direct child"],
+    [".zentic/workflows/run.yaml", "must use the .yml extension"],
+    [".zentic/workflows/partials/safety.txt", "must use the .md extension"],
     ["../hub.yml", "unsafe bundle path"],
   ])("rejects non-canonical bundle path %s", (path, message) => {
     assert.throws(

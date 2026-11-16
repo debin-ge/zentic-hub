@@ -29,7 +29,7 @@ controls. `src/typography-policy.test.ts` enforces the parts a regex can see; th
 
 ## Tokens
 
-All tokens live in `src/styles.css`. Values come from Linear's measured ramp; Paseo green survives only
+All tokens live in `src/styles.css`. Values come from Linear's measured ramp; Zentic green survives only
 as the link and focus hue.
 
 ### Surfaces and text

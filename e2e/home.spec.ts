@@ -44,7 +44,7 @@ test("walks a hosted organization from sign-in to its first run", async ({ hub, 
     await home.expectStepText("Connect an integration", "acme-inc");
     await home.expectCurrentStep("Connect a daemon");
     await expect(home.command("Connect a daemon")).toHaveText(
-      `paseo hub login ${hub.primaryApplication().origin}`,
+      `zentic hub login ${hub.primaryApplication().origin}`,
     );
   });
 
@@ -54,7 +54,7 @@ test("walks a hosted organization from sign-in to its first run", async ({ hub, 
     await home.expectStep("Connect a daemon", "needs attention");
     await home.expectStepText("Connect a daemon", "laptop cannot run agents yet");
     await expect(home.command("Connect a daemon")).toHaveText(
-      "paseo hub permissions grant hub.execute",
+      "zentic hub permissions grant hub.execute",
     );
     await home.capture(`${SHOTS}/02-cannot-run.png`);
   });
@@ -86,7 +86,7 @@ test("walks a hosted organization from sign-in to its first run", async ({ hub, 
       agent: "codex/gpt-5.4",
       mode: "full-access",
       thinking: "high",
-      prompt: "${{ paseo.prompt }}",
+      prompt: "${{ zentic.prompt }}",
     });
     await triggers.save("deploy");
     await home.open();

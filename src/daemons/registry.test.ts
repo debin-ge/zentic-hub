@@ -74,12 +74,12 @@ describe("daemon socket protocol negotiation", () => {
       const client = new WebSocket(`ws://127.0.0.1:${address.port}/api/daemons/socket`, {
         headers: {
           authorization: `Bearer ${secret}`,
-          "x-paseo-daemon-id": daemon.id,
-          ...(offered ? { "x-paseo-session-protocol": "1" } : {}),
+          "x-zentic-daemon-id": daemon.id,
+          ...(offered ? { "x-zentic-session-protocol": "1" } : {}),
         },
       });
       client.on("upgrade", (response) => {
-        negotiatedProtocol = response.headers["x-paseo-session-protocol"];
+        negotiatedProtocol = response.headers["x-zentic-session-protocol"];
       });
       client.on("message", (data: RawData) => {
         messages.push(rawDataToText(data));

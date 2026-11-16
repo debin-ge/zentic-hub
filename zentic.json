@@ -1,0 +1,16 @@
+{
+  "worktree": {
+    "setup": ["npm install", "node ./scripts/zentic-workspace.mjs setup"],
+    "teardown": "node ./scripts/zentic-workspace.mjs teardown"
+  },
+  "scripts": {
+    "app": {
+      "type": "service",
+      "command": "node ./scripts/zentic-workspace.mjs dev"
+    },
+    "evidence": {
+      "type": "service",
+      "command": "node ./scripts/zentic-workspace.mjs evidence"
+    }
+  }
+}

@@ -9,8 +9,8 @@ import { mkdir, mkdtemp, open, readFile, rm, unlink } from "node:fs/promises";
 import { promisify } from "node:util";
 import { test as base } from "@playwright/test";
 import { z } from "zod";
-import { PaseoHub, type BuiltApplication, type BuiltApplicationOptions } from "./helpers/hub.js";
-import { SourcePaseo } from "./helpers/source-paseo.js";
+import { ZenticHub, type BuiltApplication, type BuiltApplicationOptions } from "./helpers/hub.js";
+import { SourceZentic } from "./helpers/source-zentic.js";
 import type { BrowserDiscordEvent } from "../src/e2e/harness/browser-providers.js";
 import type { BrowserProviderScenario } from "../src/e2e/harness/browser-providers.js";
 import type { FixtureBillingProduct } from "../src/e2e/harness/browser-billing.js";
@@ -21,7 +21,7 @@ const billingInspectSchema = z.object({ reportedSeatQuantity: z.number().nullabl
 const slackSocketEvidenceSchema = z.object({ receipts: z.number(), runs: z.number() });
 
 export const test = base.extend<{
-  hub: PaseoHub;
+  hub: ZenticHub;
   projectExternal: ProjectExternalFacts;
   billing: boolean;
   providerScenario: BrowserProviderScenario;
@@ -53,13 +53,13 @@ export const test = base.extend<{
         providerScenario,
       });
       await provide(
-        new PaseoHub(
+        new ZenticHub(
           primary,
           browser,
           page,
           context.request,
           (options) => applications.start(options),
-          () => applications.startSourcePaseo(),
+          () => applications.startSourceZentic(),
         ),
       );
       if (testInfo.status !== testInfo.expectedStatus) {
@@ -79,10 +79,10 @@ export const test = base.extend<{
 
 class BuiltApplications {
   private readonly running: RunningApplication[] = [];
-  private readonly sourcePaseos: SourcePaseo[] = [];
+  private readonly sourceZentics: SourceZentic[] = [];
 
   async start(options: BuiltApplicationOptions = {}): Promise<BuiltApplication> {
-    const dataDirectory = await mkdtemp(join(tmpdir(), "paseo-e2e-pglite-"));
+    const dataDirectory = await mkdtemp(join(tmpdir(), "zentic-e2e-pglite-"));
     const portLease = await reservePort();
     const reverseProxyPortLease = options.reverseProxy === true ? await reservePort() : undefined;
     const port = portLease.port;
@@ -91,7 +91,7 @@ class BuiltApplications {
       options.https === true || options.reverseProxy === true ? await createTestTls() : undefined;
     const publicPort = reverseProxyPort ?? port;
     const origin = `${tls === undefined ? "http" : "https"}://127.0.0.1:${publicPort}`;
-    const machineKeyFile = join(tmpdir(), `paseo-e2e-machine-key-${randomUUID()}`);
+    const machineKeyFile = join(tmpdir(), `zentic-e2e-machine-key-${randomUUID()}`);
     const childEnvironment = applicationEnvironment({
       dataDirectory,
       origin,
@@ -192,7 +192,7 @@ class BuiltApplications {
 
   async stop(): Promise<void> {
     await Promise.all(
-      this.sourcePaseos
+      this.sourceZentics
         .splice(0)
         .reverse()
         .map((source) => source.stop()),
@@ -211,9 +211,9 @@ class BuiltApplications {
     );
   }
 
-  async startSourcePaseo(): Promise<SourcePaseo> {
-    const source = await SourcePaseo.start();
-    this.sourcePaseos.push(source);
+  async startSourceZentic(): Promise<SourceZentic> {
+    const source = await SourceZentic.start();
+    this.sourceZentics.push(source);
     return source;
   }
 }
@@ -252,45 +252,45 @@ function applicationEnvironment(input: ApplicationEnvironmentInput): NodeJS.Proc
   const environment: NodeJS.ProcessEnv = {
     ...process.env,
     PORT: String(input.port),
-    PASEO_HUB_BIND: "127.0.0.1",
-    PASEO_REGISTRATION_MODE:
+    ZENTIC_HUB_BIND: "127.0.0.1",
+    ZENTIC_REGISTRATION_MODE:
       input.registrationMode ?? (input.bootstrap === undefined ? "open" : "invite_only"),
-    PASEO_ORGANIZATION_CREATION:
+    ZENTIC_ORGANIZATION_CREATION:
       input.organizationCreation ?? (input.bootstrap === undefined ? "open" : "disabled"),
-    PASEO_HUB_AUTH_SECRET: browserAuthEnabled
+    ZENTIC_HUB_AUTH_SECRET: browserAuthEnabled
       ? "phase-zero-playwright-secret-at-least-32-characters"
       : `phase-zero-isolated-disabled-auth-${randomUUID()}`,
-    PASEO_BROWSER_AUTH_ENABLED: String(browserAuthEnabled),
-    PASEO_MACHINE_AUTH_ENABLED: String(input.machineAuth !== false),
-    PASEO_E2E_MACHINE_KEY_FILE: input.machineKeyFile,
-    PASEO_E2E_DATABASE_PROFILE: input.databaseProfile ?? "legacy",
+    ZENTIC_BROWSER_AUTH_ENABLED: String(browserAuthEnabled),
+    ZENTIC_MACHINE_AUTH_ENABLED: String(input.machineAuth !== false),
+    ZENTIC_E2E_MACHINE_KEY_FILE: input.machineKeyFile,
+    ZENTIC_E2E_DATABASE_PROFILE: input.databaseProfile ?? "legacy",
     GITHUB_WEBHOOK_SECRET: "phase-zero-webhook-secret",
-    PASEO_E2E_SLACK_SIGNING_SECRET: "phase-zero-slack-webhook-secret",
+    ZENTIC_E2E_SLACK_SIGNING_SECRET: "phase-zero-slack-webhook-secret",
     STRIPE_WEBHOOK_SECRET: "whsec_phase_zero_fixture_secret",
-    PASEO_BROWSER_BILLING_SCENARIO: input.billing === true ? "configured" : "unconfigured",
-    PASEO_BROWSER_PROVIDER_SCENARIO:
+    ZENTIC_BROWSER_BILLING_SCENARIO: input.billing === true ? "configured" : "unconfigured",
+    ZENTIC_BROWSER_PROVIDER_SCENARIO:
       input.providerScenario ??
       (input.providerConnections === false ? "not-configured" : "connected"),
-    PASEO_BROWSER_PROVIDER_APPS: input.providerApplications === true ? "dynamic" : "static",
+    ZENTIC_BROWSER_PROVIDER_APPS: input.providerApplications === true ? "dynamic" : "static",
     ...(input.reverseProxy === true
-      ? { PASEO_HUB_TRUSTED_CLIENT_IP_HEADER: "x-paseo-e2e-client-ip" }
+      ? { ZENTIC_HUB_TRUSTED_CLIENT_IP_HEADER: "x-zentic-e2e-client-ip" }
       : {}),
     ...(input.tls === undefined
       ? {}
-      : { PASEO_E2E_TLS_KEY: input.tls.key, PASEO_E2E_TLS_CERT: input.tls.cert }),
+      : { ZENTIC_E2E_TLS_KEY: input.tls.key, ZENTIC_E2E_TLS_CERT: input.tls.cert }),
     ...environmentAppVariables(input.environmentApps ?? []),
     ...(input.bootstrap === undefined
       ? {}
       : {
-          PASEO_BOOTSTRAP_ORGANIZATION: input.bootstrap.organizationName,
-          PASEO_BOOTSTRAP_OWNER_EMAIL: input.bootstrap.ownerEmail,
-          PASEO_BOOTSTRAP_OWNER_PASSWORD: input.bootstrap.ownerPassword,
+          ZENTIC_BOOTSTRAP_ORGANIZATION: input.bootstrap.organizationName,
+          ZENTIC_BOOTSTRAP_OWNER_EMAIL: input.bootstrap.ownerEmail,
+          ZENTIC_BOOTSTRAP_OWNER_PASSWORD: input.bootstrap.ownerPassword,
         }),
   };
   delete environment["DATABASE_URL"];
-  environment["PASEO_HUB_DATA_DIR"] = input.dataDirectory;
-  if (input.appUrl === undefined) delete environment["PASEO_HUB_APP_URL"];
-  else environment["PASEO_HUB_APP_URL"] = input.appUrl;
+  environment["ZENTIC_HUB_DATA_DIR"] = input.dataDirectory;
+  if (input.appUrl === undefined) delete environment["ZENTIC_HUB_APP_URL"];
+  else environment["ZENTIC_HUB_APP_URL"] = input.appUrl;
   return environment;
 }
 
@@ -303,7 +303,7 @@ interface TestTls {
 const execFileAsync = promisify(execFile);
 
 async function createTestTls(): Promise<TestTls> {
-  const root = await mkdtemp(join(tmpdir(), "paseo-e2e-tls-"));
+  const root = await mkdtemp(join(tmpdir(), "zentic-e2e-tls-"));
   const key = join(root, "localhost-key.pem");
   const cert = join(root, "localhost-cert.pem");
   await execFileAsync("openssl", [
@@ -337,7 +337,7 @@ function environmentAppVariables(
   const variables: NodeJS.ProcessEnv = {};
   if (providers.includes("github")) {
     variables["GITHUB_APP_ID"] = "42";
-    variables["GITHUB_APP_SLUG"] = "paseo";
+    variables["GITHUB_APP_SLUG"] = "zentic";
     variables["GITHUB_APP_CLIENT_ID"] = "client";
     variables["GITHUB_APP_CLIENT_SECRET"] = "secret";
     variables["GITHUB_APP_PRIVATE_KEY"] = "fixture-private-key";
@@ -451,7 +451,7 @@ async function startReverseProxy(
             host: `127.0.0.1:${targetPort}`,
             "x-forwarded-host": incoming.headers.host,
             "x-forwarded-proto": "https",
-            "x-paseo-e2e-client-ip": "127.0.0.1",
+            "x-zentic-e2e-client-ip": "127.0.0.1",
           },
         },
         (response) => {

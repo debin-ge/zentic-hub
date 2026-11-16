@@ -28,7 +28,7 @@ describe("Slack Phase 1 trigger provider", () => {
         configurationStoreForProject: () => store,
         botUserIdForWorkspace: () => Promise.resolve("UBOT"),
         client,
-        billingUrlForOrganization: async () => "https://hub.paseo.sh/o/acme/settings/billing",
+        billingUrlForOrganization: async () => "https://hub.zentic.sh/o/acme/settings/billing",
       });
       const match = (await provider.match(external(project.id, revision.id)))[0];
       if (!isAcceptedTriggerProviderMatch(match)) throw new Error("expected accepted match");
@@ -45,7 +45,7 @@ describe("Slack Phase 1 trigger provider", () => {
       );
       assert.equal(
         client.messages[0]?.content,
-        "This org has used its 50 free runs for September. Runs reset on October 1, or upgrade to Pro under Billing: https://hub.paseo.sh/o/acme/settings/billing",
+        "This org has used its 50 free runs for September. Runs reset on October 1, or upgrade to Pro under Billing: https://hub.zentic.sh/o/acme/settings/billing",
       );
       assert.equal(client.messages[0]?.threadTs, "1700000000.000001");
     } finally {
@@ -304,7 +304,7 @@ describe("Slack Phase 1 trigger provider", () => {
         teamId: "T1",
         channelId: "C1",
         threadTs: "1700000000.000001",
-        content: "Paseo agent failed: boom",
+        content: "Zentic agent failed: boom",
       },
     ]);
   });
@@ -774,7 +774,7 @@ function inputConfiguration() {
       {
         ...trigger,
         inputs: {
-          repo: { type: "string", choices: ["paseo", "hub"] },
+          repo: { type: "string", choices: ["zentic", "hub"] },
           agent: { type: "string", default: "codex", choices: ["codex", "opus"] },
         },
         filters: { ...trigger.filters, inputs: { repo: "hub" } },
@@ -782,7 +782,7 @@ function inputConfiguration() {
           {
             ...trigger.steps[0]!,
             agent: { provider: "codex", mode: "full-access" },
-            prompt: [{ text: "Request: ${{ paseo.prompt }}" }],
+            prompt: [{ text: "Request: ${{ zentic.prompt }}" }],
           },
         ],
       },
@@ -797,7 +797,7 @@ function inputFilterFanoutConfiguration() {
     ...base,
     triggers: [
       { ...first, name: "hub-only" },
-      { ...first, name: "paseo-only", filters: { ...first.filters, inputs: { repo: "paseo" } } },
+      { ...first, name: "zentic-only", filters: { ...first.filters, inputs: { repo: "zentic" } } },
     ],
   };
 }

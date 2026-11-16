@@ -21,16 +21,16 @@ describe("optional Resend email delivery", () => {
     assert.deepEqual(
       readResendConfig({
         RESEND_API_KEY: " re_test_abc123 ",
-        RESEND_FROM: " Paseo <mail@example.com> ",
+        RESEND_FROM: " Zentic <mail@example.com> ",
       }),
-      { apiKey: "re_test_abc123", from: "Paseo <mail@example.com>" },
+      { apiKey: "re_test_abc123", from: "Zentic <mail@example.com>" },
     );
   });
 
   it("delivers the message through the configured provider", async () => {
     let request: { input: string; init: RequestInit } | undefined;
     const delivery = createResendEmailDelivery(
-      { apiKey: "re_test_abc123", from: "Paseo <mail@example.com>" },
+      { apiKey: "re_test_abc123", from: "Zentic <mail@example.com>" },
       (input, init = {}) => {
         let inputUrl: string;
         if (typeof input === "string") inputUrl = input;
@@ -46,7 +46,7 @@ describe("optional Resend email delivery", () => {
       subject: "Subject",
       text: "Text",
       html: "<p>HTML</p>",
-      idempotencyKey: "paseo-message-one",
+      idempotencyKey: "zentic-message-one",
     });
 
     assert.ok(request !== undefined);
@@ -54,7 +54,7 @@ describe("optional Resend email delivery", () => {
     assert.deepEqual(request.init.headers, {
       Authorization: "Bearer re_test_abc123",
       "Content-Type": "application/json",
-      "Idempotency-Key": "paseo-message-one",
+      "Idempotency-Key": "zentic-message-one",
     });
     assert.deepEqual(
       (() => {
@@ -71,7 +71,7 @@ describe("optional Resend email delivery", () => {
           .parse(JSON.parse(body));
       })(),
       {
-        from: "Paseo <mail@example.com>",
+        from: "Zentic <mail@example.com>",
         to: ["person@example.com"],
         subject: "Subject",
         text: "Text",
@@ -92,7 +92,7 @@ describe("optional Resend email delivery", () => {
           subject: "Subject",
           text: "Text",
           html: "<p>HTML</p>",
-          idempotencyKey: "paseo-message-one",
+          idempotencyKey: "zentic-message-one",
         }),
       /^Error: Resend rejected email with status 422$/,
     );

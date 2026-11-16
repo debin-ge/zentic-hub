@@ -148,7 +148,7 @@ const ENVIRONMENT_APPLICATIONS = {
   github: {
     provider: "github",
     appId: "github-app",
-    appSlug: "paseo",
+    appSlug: "zentic",
     clientId: "github-client",
     clientSecret: "github-secret",
     privateKey: "github-private-key",

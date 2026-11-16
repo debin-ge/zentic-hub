@@ -244,10 +244,10 @@ test("ordinary launches use agent sessions and preserve long prompts without ena
 
 test("steering keeps the active agent's scoped credentials instead of requiring a new agent", async () => {
   const f = await fixture();
-  const env = { TOKEN: "${{ paseo.connections.support.token }}" };
+  const env = { TOKEN: "${{ zentic.connections.support.token }}" };
   const github = {
-    connection: "getpaseo-github",
-    repositories: ["getpaseo/paseo"],
+    connection: "getzentic-github",
+    repositories: ["getzentic/zentic"],
     permissions: { contents: "write" as const },
     durationMs: 60 * 60 * 1000,
   };
@@ -276,8 +276,8 @@ test("steering cannot extend the active agent's original max-runtime deadline", 
 test("a completed credentialed task gets a fresh agent and isolates the previous agent's tools", async () => {
   const f = await fixture();
   const github = {
-    connection: "getpaseo-github",
-    repositories: ["getpaseo/paseo"],
+    connection: "getzentic-github",
+    repositories: ["getzentic/zentic"],
     permissions: { contents: "write" as const },
     durationMs: 60 * 60 * 1000,
   };

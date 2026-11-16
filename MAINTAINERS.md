@@ -1,7 +1,7 @@
-# Maintaining Paseo Hub
+# Maintaining Zentic Hub
 
 This guide covers repository operations for maintainers. Product usage belongs in the
-[public Hub documentation](https://paseo.sh/docs/hub); architecture decisions live under
+[public Hub documentation](https://zentic.sh/docs/hub); architecture decisions live under
 [`docs/`](docs/).
 
 ## Verify a change
@@ -20,8 +20,8 @@ npm run test:e2e:browser
 npm run test:e2e:hub:source
 ```
 
-The source-built browser and Hub suites use the exact Paseo commit in `PASEO_E2E_COMMIT`.
-When a Hub change depends on a Paseo protocol or CLI change, update that immutable SHA and
+The source-built browser and Hub suites use the exact Zentic commit in `ZENTIC_E2E_COMMIT`.
+When a Hub change depends on a Zentic protocol or CLI change, update that immutable SHA and
 prove the combined contract before merging. Do not replace it with a branch or another mutable
 reference.
 
@@ -30,7 +30,7 @@ uses Oxfmt, not Prettier.
 
 ## Publish a release
 
-A Hub release is three artifacts: the `@getpaseo/hub` npm package, a multi-architecture
+A Hub release is three artifacts: the `@getzentic/hub` npm package, a multi-architecture
 container image, and a GitHub Release. npm is published locally; the tag publishes the other two.
 A release is not done until all three are out.
 
@@ -53,31 +53,31 @@ A release is not done until all three are out.
    ```sh
    npm whoami
    npm publish --access public
-   npm view @getpaseo/hub version
-   cd "$(mktemp -d)" && npx @getpaseo/hub@<version>
+   npm view @getzentic/hub version
+   cd "$(mktemp -d)" && npx @getzentic/hub@<version>
    ```
 
 6. Create an annotated tag on the release commit and push it:
 
    ```sh
-   git tag -a v<version> <commit> -m "Paseo Hub v<version>"
+   git tag -a v<version> <commit> -m "Zentic Hub v<version>"
    git push origin v<version>
    ```
 
 The tag must match both `package.json` and the changelog section. A tag push runs only the
 [Release](.github/workflows/release.yml) workflow; it does not rerun the main CI suite. The
-workflow publishes `ghcr.io/getpaseo/hub:<version>`, updates `latest` for stable releases, and
+workflow publishes `ghcr.io/getzentic/hub:<version>`, updates `latest` for stable releases, and
 creates or updates the GitHub Release from the matching changelog section. Prereleases do not
 move `latest`.
 
 Before announcing the release, verify the GitHub Release, anonymous access to both image tags, and
-that `npm view @getpaseo/hub dist-tags` shows the new version as `latest`. Later changes to the
+that `npm view @getzentic/hub dist-tags` shows the new version as `latest`. Later changes to the
 current changelog section update the existing release notes through
 [Release Notes Sync](.github/workflows/release-notes-sync.yml).
 
 ## Update public documentation
 
-Public Hub documentation lives in `getpaseo/paseo` under `public-docs/`. Open a companion PR
+Public Hub documentation lives in `getzentic/zentic` under `public-docs/`. Open a companion PR
 when an API, interface, or user-facing workflow change affects what users need to know or do.
 Internal changes and fixes that restore expected behavior do not require new public docs.
 If existing documentation becomes inaccurate, correct it with the smallest necessary edit.

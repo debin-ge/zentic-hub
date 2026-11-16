@@ -56,7 +56,7 @@ export function createExecutionCapabilityServer(
         return Response.json({ error: "unauthorized" }, { status: 401 });
       }
       const server = new Server(
-        { name: "paseo-hub-session", version: "1.0.0" },
+        { name: "zentic-hub-session", version: "1.0.0" },
         { capabilities: { tools: {} } },
       );
       server.setRequestHandler(ListToolsRequestSchema, () => ({
@@ -203,7 +203,7 @@ function createMcpServer(
   materializedOutputs: readonly MaterializedOutputCapability[],
 ): Server {
   const server = new Server(
-    { name: "paseo-hub-execution", version: "1.0.0" },
+    { name: "zentic-hub-execution", version: "1.0.0" },
     { capabilities: { tools: {} } },
   );
   const tools = executionToolDefinitions(execution.launchIntent?.outputSchema, materializedOutputs);

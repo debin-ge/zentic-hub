@@ -17,7 +17,7 @@ const START_ACCESS = {
 const CALLBACK_ACCESS = { sessionId: "session", userId: "operator" };
 const LINEAR_ORGANIZATION_ID = "linear-organization";
 const LINEAR_EXTERNAL_LOCK_KEY = JSON.stringify([
-  "paseo-connection",
+  "zentic-connection",
   "linear",
   "external",
   LINEAR_ORGANIZATION_ID,

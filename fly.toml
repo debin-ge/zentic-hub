@@ -1,4 +1,4 @@
-app = 'paseo-cloud'
+app = 'zentic-cloud'
 primary_region = 'ord'
 
 [build]
@@ -7,10 +7,10 @@ primary_region = 'ord'
 [env]
   NODE_ENV = 'production'
   PORT = '3000'
-  PASEO_HUB_APP_URL = 'https://hub.paseo.sh'
-  PASEO_HUB_TRUSTED_CLIENT_IP_HEADER = 'fly-client-ip'
-  PASEO_REGISTRATION_MODE = 'open'
-  PASEO_ORGANIZATION_CREATION = 'open'
+  ZENTIC_HUB_APP_URL = 'https://hub.zentic.sh'
+  ZENTIC_HUB_TRUSTED_CLIENT_IP_HEADER = 'fly-client-ip'
+  ZENTIC_REGISTRATION_MODE = 'open'
+  ZENTIC_ORGANIZATION_CREATION = 'open'
 
 [http_service]
   internal_port = 3000

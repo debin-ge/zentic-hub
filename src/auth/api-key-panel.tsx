@@ -109,7 +109,7 @@ const EMPTY_TABLE = {
 };
 const EMPTY_CLI_TABLE = {
   title: "No CLI logins",
-  description: "Run paseo hub login to create one.",
+  description: "Run zentic hub login to create one.",
 };
 const CLI_COLUMNS = [
   { header: "Prefix", fill: true },
@@ -199,7 +199,7 @@ export function ApiKeys() {
   const header = (
     <PageHeader title="API keys" description={`Machine access for ${account.organization.name}.`}>
       <Button asChild variant="outline">
-        <a href="https://paseo.sh/docs/hub/api">API reference</a>
+        <a href="https://zentic.sh/docs/hub/api">API reference</a>
       </Button>
       {account.capabilities.manageResources ? (
         <Button type="button" onClick={openCreate}>

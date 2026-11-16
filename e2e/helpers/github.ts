@@ -2,7 +2,7 @@ import { expect, type Page } from "@playwright/test";
 
 const GITHUB = "/e2e/github";
 const AUTHORIZE_PAGE = `${GITHUB}/login/oauth/authorize`;
-const INSTALL_PAGE = `${GITHUB}/apps/paseo/installations/new`;
+const INSTALL_PAGE = `${GITHUB}/apps/zentic/installations/new`;
 const CHOOSER = "/integrations/github";
 
 export interface GitHubAccountChoice {
@@ -40,7 +40,7 @@ export class GitHubConnectFlow {
         (!url.pathname.startsWith(GITHUB) && url.searchParams.has("result")),
     );
     if (new URL(this.page.url()).pathname !== AUTHORIZE_PAGE) return;
-    await this.page.getByRole("link", { name: "Authorize paseo" }).click();
+    await this.page.getByRole("link", { name: "Authorize zentic" }).click();
     await this.page.waitForURL((url) => url.pathname !== AUTHORIZE_PAGE);
   }
 
@@ -84,7 +84,9 @@ export class GitHubConnectFlow {
 
   async expectInstallPage(): Promise<void> {
     await expect(this.page).toHaveURL((url) => url.pathname === INSTALL_PAGE);
-    await expect(this.page.getByRole("heading", { name: "Install paseo", level: 1 })).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: "Install zentic", level: 1 }),
+    ).toBeVisible();
   }
 
   /** Installs the App on an account from GitHub's install page. */

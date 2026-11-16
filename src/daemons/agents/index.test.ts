@@ -127,7 +127,7 @@ test("a rejected workspace title is reported and leaves the titled agent usable"
 test("requires ordinary agent RPCs and durable receipts instead of falling back to Hub creation", async () => {
   const frames: string[] = [];
   const agents = new DaemonAgents((frame) => frames.push(frame));
-  await expect(agents.create("key", options)).rejects.toThrow("Update the Paseo daemon");
+  await expect(agents.create("key", options)).rejects.toThrow("Update the Zentic daemon");
   expect(frames).toEqual([]);
 });
 

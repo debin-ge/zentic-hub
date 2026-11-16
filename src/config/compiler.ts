@@ -32,7 +32,7 @@ const EVENT_NAME = /^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$/u;
 const DURATION = /^([1-9][0-9]*)(ms|s|m|h)$/u;
 const MAX_DURATION_MS = 24 * 60 * 60_000;
 const INPUT_NAME = /^[a-z][a-z0-9_-]*$/u;
-const DYNAMIC_INPUT_REFERENCE = /^\$\{\{\s*paseo\.inputs\.([a-z][a-z0-9_-]*)\s*\}\}$/u;
+const DYNAMIC_INPUT_REFERENCE = /^\$\{\{\s*zentic\.inputs\.([a-z][a-z0-9_-]*)\s*\}\}$/u;
 const EXPRESSION_START = "${{";
 const EXPRESSION_END = "}}";
 
@@ -962,7 +962,7 @@ function validateExpressionContract(
     reference: ExpressionPath,
     ordinal: number,
   ): readonly JsonValue[] | undefined {
-    if (reference.namespace === "paseo") {
+    if (reference.namespace === "zentic") {
       if (!Array.isArray(reference.path)) return undefined;
       const input = trigger.inputs[reference.path[1]];
       if (input?.choices === undefined) return undefined;
@@ -1034,19 +1034,19 @@ function validateExpressionContract(
     authorityBearing: boolean,
     contextAllowed: boolean,
   ): void {
-    if (reference.namespace === "paseo") {
+    if (reference.namespace === "zentic") {
       if (reference.path === "prompt") {
         if (authorityBearing)
-          throw new Error(`${path} uses paseo.prompt in an authority-bearing field`);
+          throw new Error(`${path} uses zentic.prompt in an authority-bearing field`);
         return;
       }
       if (reference.path === "context") {
-        if (!contextAllowed) throw new Error(`${path} uses paseo.context outside a step prompt`);
+        if (!contextAllowed) throw new Error(`${path} uses zentic.context outside a step prompt`);
         return;
       }
       if (reference.path[0] === "execution") {
         throw new Error(
-          `${path} uses paseo.execution outside environment worktree.newBranch or a step title`,
+          `${path} uses zentic.execution outside environment worktree.newBranch or a step title`,
         );
       }
       const inputName = reference.path[1];
@@ -1092,7 +1092,7 @@ function validateExpressionContract(
       );
     }
     const reference = expression.value;
-    if (reference.namespace === "paseo") {
+    if (reference.namespace === "zentic") {
       return (
         reference.path !== "prompt" && trigger.inputs[reference.path[1]]?.choices !== undefined
       );
@@ -1220,15 +1220,15 @@ function validateCompiledContract(config: CompiledHubConfig): void {
  */
 function validateTitleTemplate(title: string, path: string): void {
   for (const reference of expressionPathsInTemplate(title)) {
-    if (reference.namespace !== "paseo") {
+    if (reference.namespace !== "zentic") {
       throw new Error(
-        `${path} uses ${reference.namespace}; a title supports only paseo.execution.id`,
+        `${path} uses ${reference.namespace}; a title supports only zentic.execution.id`,
       );
     }
     const name = typeof reference.path === "string" ? reference.path : reference.path[0];
     if (name === "execution") continue;
     throw new Error(
-      `${path} uses paseo.${name}; a title is presentation and supports only paseo.execution.id`,
+      `${path} uses zentic.${name}; a title is presentation and supports only zentic.execution.id`,
     );
   }
 }
@@ -1351,7 +1351,7 @@ function isExpressionPath(value: unknown): boolean {
     );
   }
   return (
-    value["namespace"] === "paseo" &&
+    value["namespace"] === "zentic" &&
     (value["path"] === "prompt" ||
       (Array.isArray(value["path"]) &&
         value["path"].length === 2 &&

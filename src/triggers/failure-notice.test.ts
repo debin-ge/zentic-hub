@@ -17,8 +17,8 @@ it("links to the organization's billing route", async () => {
     ],
   });
   assert.equal(
-    await organizationBillingUrl(database, "https://hub.paseo.sh", "org-1"),
-    "https://hub.paseo.sh/o/acme/settings/billing",
+    await organizationBillingUrl(database, "https://hub.zentic.sh", "org-1"),
+    "https://hub.zentic.sh/o/acme/settings/billing",
   );
 });
 
@@ -33,12 +33,12 @@ it("uses the UTC month and next first for the execution limit", async () => {
   const notice = await agentFailureNotice(
     reason,
     "org-1",
-    async () => "https://hub.paseo.sh/o/acme/settings/billing",
+    async () => "https://hub.zentic.sh/o/acme/settings/billing",
     new Date("2026-12-31T23:30:00Z"),
   );
   assert.equal(
     notice,
-    "This org has used its 50 free runs for December. Runs reset on January 1, or upgrade to Pro under Billing: https://hub.paseo.sh/o/acme/settings/billing",
+    "This org has used its 50 free runs for December. Runs reset on January 1, or upgrade to Pro under Billing: https://hub.zentic.sh/o/acme/settings/billing",
   );
 });
 
@@ -54,6 +54,6 @@ it("keeps other entitlement denials on the existing error path", async () => {
     await agentFailureNotice(reason, "org-1", async () => {
       throw new Error("should not need a billing URL");
     }),
-    `Paseo agent failed: ${reason}`,
+    `Zentic agent failed: ${reason}`,
   );
 });

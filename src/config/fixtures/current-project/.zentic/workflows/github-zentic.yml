@@ -1,16 +1,16 @@
-name: github-paseo
+name: github-zentic
 on: github.issue_comment
 max_runtime: 2h
 filters:
-  repo: getpaseo/paseo
+  repo: getzentic/zentic
   from_users: [maintainer]
 steps:
   - id: work
-    environment: paseo
+    environment: zentic
     max_runtime: 1h
     idle_timeout: 10m
     agent: codex
     github:
-      connection: getpaseo
+      connection: getzentic
     prompt:
-      - text: ${{ paseo.prompt }}
+      - text: ${{ zentic.prompt }}

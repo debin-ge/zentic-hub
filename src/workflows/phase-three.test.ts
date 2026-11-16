@@ -14,12 +14,15 @@ describe("Phase 3 structured routing contract", () => {
     };
     assert.equal(
       evaluateExpression(
-        parseExpression("paseo.inputs.repo != null && steps.classify.outputs.repo == 'hub'"),
+        parseExpression("zentic.inputs.repo != null && steps.classify.outputs.repo == 'hub'"),
         context,
       ),
       false,
     );
-    assert.equal(evaluateExpression(parseExpression("paseo.inputs.repo ?? 'hub'"), context), "hub");
+    assert.equal(
+      evaluateExpression(parseExpression("zentic.inputs.repo ?? 'hub'"), context),
+      "hub",
+    );
     assert.deepEqual(evaluateExpression(parseExpression('{"repo":["hub", null]}'), context), {
       repo: ["hub", null],
     });
@@ -38,15 +41,15 @@ describe("Phase 3 structured routing contract", () => {
           on: "manual.run",
           max_runtime: "1h",
           inputs: {
-            repo: { type: "string", choices: ["paseo", "hub"] },
+            repo: { type: "string", choices: ["zentic", "hub"] },
           },
           values: {
-            selected_repo: "${{ paseo.inputs.repo ?? steps.classify.outputs.repo }}",
+            selected_repo: "${{ zentic.inputs.repo ?? steps.classify.outputs.repo }}",
           },
           steps: [
             {
               id: "classify",
-              if: "${{ paseo.inputs.repo == null }}",
+              if: "${{ zentic.inputs.repo == null }}",
               environment: "runner",
               max_runtime: "2m",
               idle_timeout: "30s",
@@ -57,7 +60,7 @@ describe("Phase 3 structured routing contract", () => {
                   type: "object",
                   additionalProperties: false,
                   required: ["repo"],
-                  properties: { repo: { enum: ["paseo", "hub"] } },
+                  properties: { repo: { enum: ["zentic", "hub"] } },
                 },
               },
             },
@@ -81,7 +84,7 @@ describe("Phase 3 structured routing contract", () => {
       type: "object",
       additionalProperties: false,
       required: ["repo"],
-      properties: { repo: { enum: ["paseo", "hub"] } },
+      properties: { repo: { enum: ["zentic", "hub"] } },
     });
   });
 });

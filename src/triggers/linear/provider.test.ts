@@ -47,10 +47,10 @@ describe("Linear trigger provider", () => {
 
   it("parses after a contains command marker following a matched pattern", async () => {
     const { project, revision, store } = await activeConfiguration(
-      commandConfiguration({ pattern: "@paseo", contains: "/run" }),
+      commandConfiguration({ pattern: "@zentic", contains: "/run" }),
     );
     const provider = createLinearTriggerProvider({ configurationStoreForProject: () => store });
-    const body = "@paseo please /run priority=high investigate";
+    const body = "@zentic please /run priority=high investigate";
 
     const match = (await provider.match(external(project.id, revision.id, undefined, body)))[0];
     if (!isAcceptedTriggerProviderMatch(match)) throw new Error("expected accepted match");
@@ -64,10 +64,10 @@ describe("Linear trigger provider", () => {
 
   it("keeps an input-shaped contains marker after a matched pattern", async () => {
     const { project, revision, store } = await activeConfiguration(
-      inputShapedMarkerConfiguration({ pattern: "@paseo" }),
+      inputShapedMarkerConfiguration({ pattern: "@zentic" }),
     );
     const provider = createLinearTriggerProvider({ configurationStoreForProject: () => store });
-    const body = "@paseo please repo=hub priority=high investigate";
+    const body = "@zentic please repo=hub priority=high investigate";
 
     const match = (await provider.match(external(project.id, revision.id, undefined, body)))[0];
     if (!isAcceptedTriggerProviderMatch(match)) throw new Error("expected accepted match");
@@ -81,10 +81,10 @@ describe("Linear trigger provider", () => {
 
   it("keeps an input-shaped suffix of an overlapping contains marker", async () => {
     const { project, revision, store } = await activeConfiguration(
-      inputShapedMarkerConfiguration({ pattern: "@paseo", contains: "@paseo repo=hub" }),
+      inputShapedMarkerConfiguration({ pattern: "@zentic", contains: "@zentic repo=hub" }),
     );
     const provider = createLinearTriggerProvider({ configurationStoreForProject: () => store });
-    const body = "@paseo repo=hub priority=high investigate";
+    const body = "@zentic repo=hub priority=high investigate";
 
     const match = (await provider.match(external(project.id, revision.id, undefined, body)))[0];
     if (!isAcceptedTriggerProviderMatch(match)) throw new Error("expected accepted match");
@@ -319,7 +319,7 @@ function linearCommentConfiguration() {
             max_runtime: "1h",
             idle_timeout: "5m",
             agent: { provider: "codex" },
-            prompt: [{ text: "Work from ${{ paseo.context }}" }],
+            prompt: [{ text: "Work from ${{ zentic.context }}" }],
           },
         ],
       },
@@ -357,7 +357,7 @@ function inputShapedMarkerConfiguration(marker: { pattern?: string; contains?: s
       {
         ...trigger,
         inputs: {
-          repo: { type: "string", required: true, choices: ["hub", "paseo"] },
+          repo: { type: "string", required: true, choices: ["hub", "zentic"] },
           priority: { type: "string", required: true, choices: ["high", "low"] },
         },
         filters: {
@@ -375,7 +375,7 @@ function external(
   projectId: string,
   configurationRevisionId: string,
   occurredAt = "2026-01-02T00:00:00.000Z",
-  commentBody = "@paseo please investigate",
+  commentBody = "@zentic please investigate",
 ): ExternalTrigger {
   return {
     providerEventReceiptId: "11111111-1111-4111-8111-111111111119",
@@ -392,7 +392,7 @@ function external(
 
 function event(
   occurredAt: string,
-  commentBody = "@paseo please investigate",
+  commentBody = "@zentic please investigate",
 ): NormalizedLinearCommentEvent {
   return {
     type: "comment",

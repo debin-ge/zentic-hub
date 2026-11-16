@@ -64,7 +64,7 @@ const HUB_ORGANIZATION_ID = "org_1";
 const HUB_PROJECT_ID = "00000000-0000-4000-8000-000000000001";
 const HUB_PROJECT_SLUG = "default";
 const HUB_USER_ID = "hub-harness";
-const HUB_API_KEY = "paseo_pk_hub-harness_test";
+const HUB_API_KEY = "zentic_pk_hub-harness_test";
 const HUB_API_KEY_ID = "00000000-0000-4000-8000-0000000000aa";
 const hubOperationAuth: OperationAuthenticator = {
   async authorize(request: Request, _scope: ApiKeyScope) {
@@ -322,7 +322,7 @@ export class HubHarness {
     }
   }
 
-  async seedSlackWorkspace(teamId: string, slug = "paseo"): Promise<string> {
+  async seedSlackWorkspace(teamId: string, slug = "zentic"): Promise<string> {
     if (this.postgres === undefined) throw new Error("Postgres is unavailable");
     const id = "00000000-0000-4000-8000-0000000000c1";
     const client = await createPostgresQueryRuntime(this.postgres.getConnectionUri());
@@ -330,7 +330,7 @@ export class HubHarness {
     await client.query(
       `insert into slack_connections
          (id, organization_id, team_id, slug, team_name, bot_user_id, bot_access_token, scopes)
-       values ($1, $2, $3, $4, 'Paseo', 'UBOT', 'xoxb-test', $5)
+       values ($1, $2, $3, $4, 'Zentic', 'UBOT', 'xoxb-test', $5)
        on conflict (team_id) do nothing`,
       [id, HUB_ORGANIZATION_ID, teamId, slug, JSON.stringify(["app_mentions:read", "chat:write"])],
     );
@@ -339,7 +339,7 @@ export class HubHarness {
   }
 
   async seedCurrentProjectResources(): Promise<string> {
-    const slackId = await this.seedSlackWorkspace("paseo");
+    const slackId = await this.seedSlackWorkspace("zentic");
     if (this.postgres === undefined) throw new Error("Postgres is unavailable");
     const client = await createPostgresQueryRuntime(this.postgres.getConnectionUri());
 
@@ -347,14 +347,14 @@ export class HubHarness {
     await client.query(
       `insert into discord_connections
          (id, organization_id, guild_id, slug, guild_name)
-       values ('00000000-0000-4000-8000-0000000000c3', $1, 'paseo', 'paseo', 'Paseo')
+       values ('00000000-0000-4000-8000-0000000000c3', $1, 'zentic', 'zentic', 'Zentic')
        on conflict (guild_id) do nothing`,
       [HUB_ORGANIZATION_ID],
     );
     await client.query(
       `insert into github_connections
          (id, organization_id, installation_id, slug, account_id, account_login, account_type, status)
-       values ($1, $2, 9001, 'getpaseo', 'getpaseo', 'getpaseo', 'Organization', 'active')
+       values ($1, $2, 9001, 'getzentic', 'getzentic', 'getzentic', 'Organization', 'active')
        on conflict (installation_id) do nothing`,
       [githubId, HUB_ORGANIZATION_ID],
     );
@@ -362,8 +362,8 @@ export class HubHarness {
       `insert into github_repositories
          (organization_id, connection_id, repository_id, full_name, default_branch)
        values
-         ($1, $2, 9101, 'getpaseo/hub', 'main'),
-         ($1, $2, 9102, 'getpaseo/paseo', 'main')
+         ($1, $2, 9101, 'getzentic/hub', 'main'),
+         ($1, $2, 9102, 'getzentic/zentic', 'main')
        on conflict (connection_id, repository_id) do nothing`,
       [HUB_ORGANIZATION_ID, githubId],
     );
@@ -1422,7 +1422,7 @@ export class HubHarness {
       "        agent:",
       "          provider: opencode",
       "          mode: full-access",
-      '        prompt: [{ text: "Review ${{ paseo.prompt }}\\nContext: ${{ paseo.context }}" }]',
+      '        prompt: [{ text: "Review ${{ zentic.prompt }}\\nContext: ${{ zentic.context }}" }]',
     ].join("\n");
   }
 
@@ -1465,14 +1465,14 @@ export class HubHarness {
         organizationId: HUB_ORGANIZATION_ID,
         projectId: HUB_PROJECT_ID,
         connectionId,
-        resourceId: "paseo",
+        resourceId: "zentic",
         source: "slack.mention",
         deliveryId: "current-project-slack-1",
         receivedAt: "2026-08-10T10:00:00.000Z",
         payload: {
           type: "mention",
           id: "Ev-current-project-1",
-          teamId: "paseo",
+          teamId: "zentic",
           appId: "A1",
           channelId: "C1",
           messageTs: "1700000000.000100",
@@ -1658,7 +1658,7 @@ export class HubHarness {
     );
     await client.query(
       `insert into "user" (id, name, email, email_verified)
-       values ($1, 'Hub harness', 'hub-harness@paseo.test', true)`,
+       values ($1, 'Hub harness', 'hub-harness@zentic.test', true)`,
       [HUB_USER_ID],
     );
     await client.query(
@@ -1669,7 +1669,7 @@ export class HubHarness {
     await client.query(
       `insert into organization_api_keys
          (id, organization_id, name, prefix, verifier, scopes, created_by_user_id)
-       values ($1, $2, 'Hub harness', 'paseo_pk_harness', 'hub-harness-verifier',
+       values ($1, $2, 'Hub harness', 'zentic_pk_harness', 'hub-harness-verifier',
                $3, $4)`,
       [
         HUB_API_KEY_ID,
@@ -1845,7 +1845,7 @@ export class HubHarness {
             token: `durable-scoped-token-${this.authorityTokenCount}`,
             expiresAt: Date.now() + 60 * 60_000,
             botUserId: 1234,
-            botLogin: "paseo[bot]",
+            botLogin: "zentic[bot]",
           };
         },
         revoke: async (token) => {
@@ -2293,8 +2293,8 @@ class TestDaemon {
     const socket = new WebSocket(this.webSocketUrl, {
       headers: {
         authorization: `Bearer ${this.credential}`,
-        "x-paseo-daemon-id": this.daemonId,
-        "x-paseo-session-protocol": "1",
+        "x-zentic-daemon-id": this.daemonId,
+        "x-zentic-session-protocol": "1",
       },
     });
     socket.on("message", (data) => this.receive(data));
@@ -2311,7 +2311,7 @@ class TestDaemon {
       const socket = new WebSocket(this.webSocketUrl!, {
         headers: {
           authorization: `Bearer ${secret}`,
-          "x-paseo-daemon-id": this.daemonId,
+          "x-zentic-daemon-id": this.daemonId,
         },
       });
       socket.once("unexpected-response", (_request, response) => {
@@ -2859,7 +2859,7 @@ async function availablePort(): Promise<number> {
 
 function machineHeaders(auth: "valid" | "missing" | "wrong"): Record<string, string> {
   if (auth === "valid") return { authorization: `Bearer ${HUB_API_KEY}` };
-  if (auth === "wrong") return { authorization: "Bearer paseo_pk_wrong" };
+  if (auth === "wrong") return { authorization: "Bearer zentic_pk_wrong" };
   return {};
 }
 

@@ -77,12 +77,12 @@ function Welcome({ onBegin }: { onBegin: () => void }) {
     <AuthLayout>
       <AuthCard
         titleId="welcome-heading"
-        title="Welcome to Paseo Hub"
-        description="Set up an account to start operating Paseo Hub."
+        title="Welcome to Zentic Hub"
+        description="Set up an account to start operating Zentic Hub."
       >
         <AuthActions>
           <Button type="button" size="lg" onClick={onBegin}>
-            Set up Paseo Hub
+            Set up Zentic Hub
           </Button>
         </AuthActions>
       </AuthCard>

@@ -1,8 +1,8 @@
 environments:
-  paseo:
+  zentic:
     kind: daemon
     daemon: local
-    cwd: /workspace/paseo
+    cwd: /workspace/zentic
   hub:
     kind: daemon
     daemon: local

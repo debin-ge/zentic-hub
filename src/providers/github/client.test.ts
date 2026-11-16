@@ -112,7 +112,7 @@ describe("GitHub connection client", () => {
 
     const failing = createGitHubConnectionClient({
       publicBaseUrl: HUB,
-      appSlug: "paseo",
+      appSlug: "zentic",
       clientId: "client",
       clientSecret: "secret",
       appAuth: {

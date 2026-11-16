@@ -3310,7 +3310,7 @@ class MemoryDatabase implements Database {
     operation: LinearConnectionRefreshOperation<T>,
   ): Promise<T> {
     return this.withAdvisoryLock(
-      JSON.stringify(["paseo-connection", "linear", "external", linearOrganizationId]),
+      JSON.stringify(["zentic-connection", "linear", "external", linearOrganizationId]),
       async () => {
         const connection = this.linearConnections.get(linearOrganizationId);
         return operation(connection, async (input) => {

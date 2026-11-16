@@ -115,7 +115,7 @@ describe("durable multi-step workflow engine", () => {
     },
   );
 
-  it("materializes ambient context only for the step that authors paseo.context", async () => {
+  it("materializes ambient context only for the step that authors zentic.context", async () => {
     const fixture = await workflowFixture({ rawConfiguration: contextOptInConfiguration() });
     const prompts: string[] = [];
     const materializedExecutionIds: string[] = [];
@@ -728,14 +728,14 @@ describe("durable multi-step workflow engine", () => {
   });
 
   it("launches the exact committed partial content with inline-equivalent interpolation", async () => {
-    const content = "Committed partial for ${{ paseo.prompt }} / ${{ paseo.inputs.repo }}";
+    const content = "Committed partial for ${{ zentic.prompt }} / ${{ zentic.inputs.repo }}";
     const fixture = await workflowFixture({
       rawConfiguration: partialRuntimeConfiguration(),
       resolvedPromptPartials: new Map([
         [
-          ".paseo/workflows/partials/instructions.md",
+          ".zentic/workflows/partials/instructions.md",
           {
-            path: ".paseo/workflows/partials/instructions.md",
+            path: ".zentic/workflows/partials/instructions.md",
             content,
             contentHash: hashPromptPartialContent(content),
           },
@@ -782,7 +782,7 @@ describe("durable multi-step workflow engine", () => {
       [
         ["classify", "skipped"],
         ["work-hub", "running"],
-        ["work-paseo", "pending"],
+        ["work-zentic", "pending"],
       ],
     );
     assert.deepEqual(dispatches, ["work-hub"]);
@@ -802,7 +802,7 @@ describe("durable multi-step workflow engine", () => {
       [
         ["classify", "skipped"],
         ["work-hub", "succeeded"],
-        ["work-paseo", "skipped"],
+        ["work-zentic", "skipped"],
       ],
     );
   });
@@ -826,12 +826,12 @@ describe("durable multi-step workflow engine", () => {
       executionId: classifier.id,
       executionStatus: "succeeded",
       stepStatus: "succeeded",
-      result: { status: "succeeded", output: { repo: "paseo" } },
-      stepOutput: { repo: "paseo" },
+      result: { status: "succeeded", output: { repo: "zentic" } },
+      stepOutput: { repo: "zentic" },
       completedByAgent: true,
     });
     await engine.processAvailable();
-    assert.deepEqual(dispatches, ["classify", "work-paseo"]);
+    assert.deepEqual(dispatches, ["classify", "work-zentic"]);
     assert.equal(
       (await fixture.database.listWorkflowStepRunsForTriggerRun(run.id))[1]!.status,
       "skipped",
@@ -1021,7 +1021,7 @@ describe("durable multi-step workflow engine", () => {
     assert.equal(intents.length, 1);
     assert.equal(intents[0]?.github, undefined);
     assert.deepEqual(intents[0]?.env, {
-      SOME_TOKEN: "${{ paseo.connections.some-connection.token }}",
+      SOME_TOKEN: "${{ zentic.connections.some-connection.token }}",
     });
   });
 
@@ -1770,7 +1770,7 @@ function partialRuntimeConfiguration(): Record<string, unknown> {
             agent: { provider: "codex" },
             prompt: [
               { include: "partials/instructions.md" },
-              { text: "Inline ${{ paseo.prompt }} / ${{ paseo.inputs.repo }}" },
+              { text: "Inline ${{ zentic.prompt }} / ${{ zentic.inputs.repo }}" },
             ],
           },
         ],
@@ -1852,7 +1852,7 @@ function contextOptInConfiguration(): Record<string, unknown> {
             max_runtime: "10m",
             idle_timeout: "1m",
             agent: { provider: "codex" },
-            prompt: [{ text: "Trigger: ${{ paseo.prompt }}" }],
+            prompt: [{ text: "Trigger: ${{ zentic.prompt }}" }],
           },
           {
             id: "with-context",
@@ -1860,7 +1860,7 @@ function contextOptInConfiguration(): Record<string, unknown> {
             max_runtime: "10m",
             idle_timeout: "1m",
             agent: { provider: "codex" },
-            prompt: [{ text: "Context: ${{ paseo.context }}\nTrigger: ${{ paseo.prompt }}" }],
+            prompt: [{ text: "Context: ${{ zentic.context }}\nTrigger: ${{ zentic.prompt }}" }],
           },
         ],
       },
@@ -1950,7 +1950,7 @@ function skippedOutputPromptConfiguration(): Record<string, unknown> {
 function namedSelectionConfiguration(): Record<string, unknown> {
   return {
     environments: [
-      { name: "paseo", kind: "daemon", daemon: "runner", cwd: "/workspace/paseo" },
+      { name: "zentic", kind: "daemon", daemon: "runner", cwd: "/workspace/zentic" },
       { name: "hub", kind: "daemon", daemon: "runner", cwd: "/workspace/hub" },
     ],
     triggers: [
@@ -1965,7 +1965,7 @@ function namedSelectionConfiguration(): Record<string, unknown> {
         steps: [
           {
             id: "classifier",
-            environment: "paseo",
+            environment: "zentic",
             max_runtime: "2m",
             idle_timeout: "30s",
             agent: { provider: "codex" },
@@ -1976,7 +1976,7 @@ function namedSelectionConfiguration(): Record<string, unknown> {
                 additionalProperties: false,
                 required: ["environment", "agent"],
                 properties: {
-                  environment: { enum: ["paseo", "hub"] },
+                  environment: { enum: ["zentic", "hub"] },
                   agent: { enum: ["codex", "claude"] },
                 },
               },
@@ -2014,8 +2014,8 @@ function skippedAuthorityConfiguration(): Record<string, unknown> {
             agent: { provider: "codex" },
             prompt: [{ text: "Classify" }],
             github: {
-              connection: "getpaseo-github",
-              repositories: ["getpaseo/paseo"],
+              connection: "getzentic-github",
+              repositories: ["getzentic/zentic"],
               permissions: { contents: "write" },
             },
           },
@@ -2027,7 +2027,7 @@ function skippedAuthorityConfiguration(): Record<string, unknown> {
             idle_timeout: "1m",
             agent: { provider: "codex" },
             prompt: [{ text: "Work" }],
-            env: { SOME_TOKEN: "${{ paseo.connections.some-connection.token }}" },
+            env: { SOME_TOKEN: "${{ zentic.connections.some-connection.token }}" },
           },
         ],
       },
@@ -2105,17 +2105,17 @@ function baseConfiguration(options: { unavailableValue?: boolean }): Record<stri
         name: "route-request",
         on: "manual.run",
         max_runtime: "1h",
-        inputs: { repo: { type: "string", choices: ["paseo", "hub"] } },
+        inputs: { repo: { type: "string", choices: ["zentic", "hub"] } },
         values: {
           repo:
             options.unavailableValue === true
               ? "${{ steps.classify.outputs.repo }}"
-              : "${{ paseo.inputs.repo ?? steps.classify.outputs.repo }}",
+              : "${{ zentic.inputs.repo ?? steps.classify.outputs.repo }}",
         },
         steps: [
           {
             id: "classify",
-            if: "${{ paseo.inputs.repo == null }}",
+            if: "${{ zentic.inputs.repo == null }}",
             environment: "runner",
             max_runtime: "2m",
             idle_timeout: "30s",
@@ -2126,7 +2126,7 @@ function baseConfiguration(options: { unavailableValue?: boolean }): Record<stri
                 type: "object",
                 additionalProperties: false,
                 required: ["repo"],
-                properties: { repo: { enum: ["paseo", "hub"] } },
+                properties: { repo: { enum: ["zentic", "hub"] } },
               },
             },
           },
@@ -2140,13 +2140,13 @@ function baseConfiguration(options: { unavailableValue?: boolean }): Record<stri
             prompt: [{ text: "Work hub" }],
           },
           {
-            id: "work-paseo",
-            if: "${{ values.repo == 'paseo' }}",
+            id: "work-zentic",
+            if: "${{ values.repo == 'zentic' }}",
             environment: "runner",
             max_runtime: "10m",
             idle_timeout: "1m",
             agent: { provider: "codex" },
-            prompt: [{ text: "Work paseo" }],
+            prompt: [{ text: "Work zentic" }],
           },
         ],
       },
@@ -2174,7 +2174,7 @@ function terminalRecoveryConfiguration(): Record<string, unknown> {
           },
           {
             id: "downstream",
-            if: "${{ paseo.inputs.repo == 'hub' }}",
+            if: "${{ zentic.inputs.repo == 'hub' }}",
             environment: "runner",
             max_runtime: "2m",
             idle_timeout: "30s",
@@ -2204,7 +2204,7 @@ function executionWorktreeConfiguration(): Record<string, unknown> {
         kind: "daemon",
         daemon: "runner",
         cwd: "/workspace",
-        worktree: { mode: "branch-off", newBranch: "trigger-${{ paseo.execution.id }}" },
+        worktree: { mode: "branch-off", newBranch: "trigger-${{ zentic.execution.id }}" },
       },
     ],
     triggers: ["first", "second"].map((name) => ({
@@ -2212,7 +2212,7 @@ function executionWorktreeConfiguration(): Record<string, unknown> {
       on: "manual.run",
       max_runtime: "1h",
       steps: [
-        step(`work-${name}`, name === "first" ? "Intake · ${{ paseo.execution.id }}" : undefined),
+        step(`work-${name}`, name === "first" ? "Intake · ${{ zentic.execution.id }}" : undefined),
       ],
     })),
   };
@@ -2228,7 +2228,7 @@ function dispatchLabel(intent: {
   if (intent.prompt === "Downstream") return "downstream";
   if (intent.triggerName !== "route-request") return "unknown";
   if (intent.prompt.startsWith("Classify")) return "classify";
-  return intent.prompt.includes("paseo") ? "work-paseo" : "work-hub";
+  return intent.prompt.includes("zentic") ? "work-zentic" : "work-hub";
 }
 
 async function settlesQuickly<T>(promise: Promise<T>): Promise<boolean> {

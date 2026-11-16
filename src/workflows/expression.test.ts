@@ -16,21 +16,21 @@ describe("workflow expression context", () => {
       values: {},
     };
 
-    assert.equal(renderExpressionTemplate("${{ paseo.prompt }}", context), "the triggering body");
+    assert.equal(renderExpressionTemplate("${{ zentic.prompt }}", context), "the triggering body");
     assert.equal(
-      renderExpressionTemplate("${{ paseo.context }}", context),
+      renderExpressionTemplate("${{ zentic.context }}", context),
       JSON.stringify(context.context),
     );
-    assert.deepEqual(parseExpression("${{ paseo.context }}"), {
+    assert.deepEqual(parseExpression("${{ zentic.context }}"), {
       kind: "path",
-      value: { namespace: "paseo", path: "context" },
+      value: { namespace: "zentic", path: "context" },
     });
   });
 
   it("renders the stable execution ID without provider context", () => {
     assert.equal(
       renderExecutionTemplate(
-        "trigger-${{ paseo.execution.id }}",
+        "trigger-${{ zentic.execution.id }}",
         "64ae56ff-281c-4c5f-bf5c-d572f125c702",
       ),
       "trigger-64ae56ff-281c-4c5f-bf5c-d572f125c702",

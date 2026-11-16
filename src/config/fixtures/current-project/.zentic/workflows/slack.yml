@@ -2,7 +2,7 @@ name: slack-request
 on: slack.mention
 max_runtime: 2h
 filters:
-  workspace: paseo
+  workspace: zentic
   from_users: [maintainer]
 values:
   selected_environment: ${{ steps.classify.outputs.environment }}
@@ -15,13 +15,13 @@ steps:
     agent: claude
     prompt:
       - include: partials/classify.md
-      - text: ${{ paseo.prompt }}
+      - text: ${{ zentic.prompt }}
     output:
       schema:
         type: object
         required: [environment, agent]
         properties:
-          environment: { enum: [paseo, hub] }
+          environment: { enum: [zentic, hub] }
           agent: { enum: [codex, claude] }
         additionalProperties: false
   - id: work
@@ -30,6 +30,6 @@ steps:
     idle_timeout: 10m
     agent: ${{ values.selected_agent }}
     prompt:
-      - text: ${{ paseo.prompt }}
+      - text: ${{ zentic.prompt }}
     allow_outputs:
       - { type: slack.reply, max: 1, required: true }

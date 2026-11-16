@@ -81,10 +81,10 @@ describe("workflow compiler", () => {
   });
 
   it.each([
-    "paseo.event.github.delivery_id",
-    "paseo.prompt",
-    "paseo.context",
-    "paseo.inputs.repo",
+    "zentic.event.github.delivery_id",
+    "zentic.prompt",
+    "zentic.context",
+    "zentic.inputs.repo",
     "values.branch",
     "steps.prepare.outputs.branch",
   ])("rejects unsupported newBranch expression %s with field provenance", (expression) => {
@@ -112,7 +112,7 @@ describe("workflow compiler", () => {
         ]);
         assert.match(
           error.message,
-          /unsupported path|execution templates support only paseo\.execution\.id paths/iu,
+          /unsupported path|execution templates support only zentic\.execution\.id paths/iu,
         );
         return true;
       },
@@ -128,7 +128,7 @@ describe("workflow compiler", () => {
             ...environment,
             worktree: {
               mode: "branch-off",
-              newBranch: "trigger-${{ paseo.execution.id }}",
+              newBranch: "trigger-${{ zentic.execution.id }}",
             },
           },
         ],
@@ -138,13 +138,13 @@ describe("workflow compiler", () => {
 
   it("accepts the execution id in a step title and stores the template", () => {
     const authored = configuration();
-    Reflect.set(authored.triggers[0]!.steps[0]!, "title", "Intake · ${{ paseo.execution.id }}");
+    Reflect.set(authored.triggers[0]!.steps[0]!, "title", "Intake · ${{ zentic.execution.id }}");
     const compiled = compileHubConfig(authored);
-    assert.equal(compiled.triggers[0]?.steps[0]?.title, "Intake · ${{ paseo.execution.id }}");
+    assert.equal(compiled.triggers[0]?.steps[0]?.title, "Intake · ${{ zentic.execution.id }}");
     assert.deepEqual(parseCompiledHubConfig(compiled), compiled);
   });
 
-  it.each(["paseo.prompt", "paseo.context", "paseo.inputs.repo", "values.branch"])(
+  it.each(["zentic.prompt", "zentic.context", "zentic.inputs.repo", "values.branch"])(
     "rejects %s in a step title with field provenance",
     (expression) => {
       const authored = configuration();
@@ -160,7 +160,7 @@ describe("workflow compiler", () => {
             "work",
             "title",
           ]);
-          assert.match(error.message, /supports only paseo\.execution\.id/u);
+          assert.match(error.message, /supports only zentic\.execution\.id/u);
           return true;
         },
       );
@@ -224,22 +224,22 @@ describe("workflow compiler", () => {
       triggers: [
         {
           ...configuration().triggers[0],
-          inputs: { repo: { type: "string", choices: ["paseo", "hub"] } },
-          values: { selected: "${{ paseo.inputs.repo ?? steps.classify.outputs.repo }}" },
+          inputs: { repo: { type: "string", choices: ["zentic", "hub"] } },
+          values: { selected: "${{ zentic.inputs.repo ?? steps.classify.outputs.repo }}" },
           steps: [
             {
               ...configuration().triggers[0]!.steps[0],
               id: "classify",
-              if: "${{ paseo.inputs.repo == null }}",
+              if: "${{ zentic.inputs.repo == null }}",
               output: {
-                schema: { type: "object", properties: { repo: { enum: ["paseo", "hub"] } } },
+                schema: { type: "object", properties: { repo: { enum: ["zentic", "hub"] } } },
               },
             },
             {
               ...configuration().triggers[0]!.steps[0],
               id: "work",
               if: "${{ values.selected == 'hub' }}",
-              prompt: [{ text: "${{ paseo.prompt }} / ${{ values.selected }}" }],
+              prompt: [{ text: "${{ zentic.prompt }} / ${{ values.selected }}" }],
             },
           ],
         },
@@ -299,20 +299,20 @@ describe("workflow compiler", () => {
     const raw = configuration();
     const step = raw.triggers[0]!.steps[0]!;
     Reflect.set(step, "env", {
-      SOME_TOKEN: "prefix-${{ paseo.connections.some-connection.token }}",
+      SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     Reflect.set(step, "github", {
-      connection: "getpaseo-github",
-      repositories: ["getpaseo/paseo"],
+      connection: "getzentic-github",
+      repositories: ["getzentic/zentic"],
     });
 
     const compiled = compileHubConfig(raw);
     assert.deepEqual(compiled.triggers[0]?.steps[0]?.env, {
-      SOME_TOKEN: "prefix-${{ paseo.connections.some-connection.token }}",
+      SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     assert.deepEqual(compiled.triggers[0]?.steps[0]?.github, {
-      connection: "getpaseo-github",
-      repositories: ["getpaseo/paseo"],
+      connection: "getzentic-github",
+      repositories: ["getzentic/zentic"],
       permissions: { contents: "read" },
       durationMs: 60 * 60 * 1000,
     });
@@ -329,13 +329,13 @@ describe("workflow compiler", () => {
           ...raw.triggers[0],
           on: "github.push",
           filters: { from_users: ["github-user"] },
-          steps: [{ ...step, github: { connection: "getpaseo-github" } }],
+          steps: [{ ...step, github: { connection: "getzentic-github" } }],
         },
       ],
     });
 
     assert.deepEqual(compiled.triggers[0]?.steps[0]?.github, {
-      connection: "getpaseo-github",
+      connection: "getzentic-github",
       permissions: { contents: "read" },
       durationMs: 60 * 60 * 1000,
     });
@@ -385,7 +385,7 @@ describe("workflow compiler", () => {
           triggers: [
             {
               ...raw.triggers[0],
-              steps: [{ ...step, github: { connection: "getpaseo-github" } }],
+              steps: [{ ...step, github: { connection: "getzentic-github" } }],
             },
           ],
         }),
@@ -399,24 +399,24 @@ describe("workflow compiler", () => {
     const cases = [
       {
         github: {
-          connection: "getpaseo-github",
-          repositories: ["getpaseo/paseo"],
+          connection: "getzentic-github",
+          repositories: ["getzentic/zentic"],
           permissions: { contents: "admin" },
         },
         expected: /github\.permissions\.contents.*admin.*not supported/iu,
       },
       {
         github: {
-          connection: "getpaseo-github",
-          repositories: ["getpaseo/paseo"],
+          connection: "getzentic-github",
+          repositories: ["getzentic/zentic"],
           permissions: { invented: "read" },
         },
         expected: /github\.permissions\.invented.*unknown GitHub permission/iu,
       },
       {
         github: {
-          connection: "getpaseo-github",
-          repositories: ["getpaseo/paseo"],
+          connection: "getzentic-github",
+          repositories: ["getzentic/zentic"],
           duration: "2h",
         },
         expected: /github\.duration.*must not exceed 1h/iu,
@@ -446,8 +446,8 @@ describe("workflow compiler", () => {
     const raw = configuration();
     const step = raw.triggers[0]!.steps[0]!;
     Reflect.set(step, "github", {
-      connection: "getpaseo-github",
-      repositories: ["getpaseo/paseo"],
+      connection: "getzentic-github",
+      repositories: ["getzentic/zentic"],
       permissions: { [name]: level },
     });
 
@@ -461,8 +461,8 @@ describe("workflow compiler", () => {
       const raw = configuration();
       const step = raw.triggers[0]!.steps[0]!;
       Reflect.set(step, "github", {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
         permissions: { [name]: "write" },
       });
 
@@ -478,8 +478,8 @@ describe("workflow compiler", () => {
       GIT_CONFIG_COUNT: "1",
     });
     Reflect.set(step, "github", {
-      connection: "getpaseo-github",
-      repositories: ["getpaseo/paseo"],
+      connection: "getzentic-github",
+      repositories: ["getzentic/zentic"],
     });
 
     assert.throws(
@@ -495,8 +495,8 @@ describe("workflow compiler", () => {
       const step = raw.triggers[0]!.steps[0]!;
       Reflect.set(step, "env", { [key]: "user-authored" });
       Reflect.set(step, "github", {
-        connection: "getpaseo-github",
-        repositories: ["getpaseo/paseo"],
+        connection: "getzentic-github",
+        repositories: ["getzentic/zentic"],
       });
 
       assert.throws(() => compileHubConfig(raw), /reserved by the step-level github authority/iu);
@@ -598,7 +598,7 @@ describe("workflow compiler", () => {
           triggers: [
             {
               ...trigger,
-              steps: [{ ...trigger.steps[0]!, agent: { provider: "${{ paseo.prompt }}" } }],
+              steps: [{ ...trigger.steps[0]!, agent: { provider: "${{ zentic.prompt }}" } }],
             },
           ],
         }),
@@ -613,7 +613,7 @@ describe("workflow compiler", () => {
               ...trigger,
               inputs: { provider: { type: "string" } },
               steps: [
-                { ...trigger.steps[0]!, agent: { provider: "${{ paseo.inputs.provider }}" } },
+                { ...trigger.steps[0]!, agent: { provider: "${{ zentic.inputs.provider }}" } },
               ],
             },
           ],
@@ -630,7 +630,7 @@ describe("workflow compiler", () => {
         triggers: [
           {
             ...trigger,
-            steps: [{ ...trigger.steps[0]!, prompt: [{ text: "${{ paseo.context }}" }] }],
+            steps: [{ ...trigger.steps[0]!, prompt: [{ text: "${{ zentic.context }}" }] }],
           },
         ],
       }),
@@ -642,11 +642,11 @@ describe("workflow compiler", () => {
           triggers: [
             {
               ...trigger,
-              steps: [{ ...trigger.steps[0]!, if: "${{ paseo.context }}" }],
+              steps: [{ ...trigger.steps[0]!, if: "${{ zentic.context }}" }],
             },
           ],
         }),
-      /paseo\.context outside a step prompt/iu,
+      /zentic\.context outside a step prompt/iu,
     );
     assert.throws(
       () =>
@@ -658,7 +658,7 @@ describe("workflow compiler", () => {
               steps: [
                 {
                   ...trigger.steps[0]!,
-                  agent: { provider: "${{ paseo.context }}" },
+                  agent: { provider: "${{ zentic.context }}" },
                 },
               ],
             },
@@ -825,7 +825,7 @@ describe("workflow compiler", () => {
       () =>
         compileHubConfig({
           ...configuration(),
-          environments: [{ name: "docker", kind: "docker", image: "paseo/test" }],
+          environments: [{ name: "docker", kind: "docker", image: "zentic/test" }],
           triggers: [
             {
               ...trigger,
@@ -839,7 +839,7 @@ describe("workflow compiler", () => {
       () =>
         compileHubConfig({
           ...configuration(),
-          environments: [{ name: "fly", kind: "fly", image: "paseo/test" }],
+          environments: [{ name: "fly", kind: "fly", image: "zentic/test" }],
           triggers: [
             {
               ...trigger,
@@ -853,7 +853,7 @@ describe("workflow compiler", () => {
       () =>
         compileHubConfig({
           ...configuration(),
-          environments: [environment, { name: "docker", kind: "docker", image: "paseo/test" }],
+          environments: [environment, { name: "docker", kind: "docker", image: "zentic/test" }],
           triggers: [
             {
               ...trigger,
@@ -861,7 +861,7 @@ describe("workflow compiler", () => {
               steps: [
                 {
                   ...trigger.steps[0]!,
-                  environment: "${{ paseo.inputs.runner }}",
+                  environment: "${{ zentic.inputs.runner }}",
                 },
               ],
             },

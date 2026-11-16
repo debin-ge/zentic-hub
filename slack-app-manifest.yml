@@ -1,8 +1,8 @@
 display_information:
-  name: Paseo
+  name: Zentic
 features:
   bot_user:
-    display_name: Paseo
+    display_name: Zentic
     always_online: false
 oauth_config:
   scopes:

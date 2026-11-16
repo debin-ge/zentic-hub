@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeAll, beforeEach, describe, it } from "vitest";
 import { HubE2E } from "./harness/index.js";
-import { prebuildPaseoArtifacts, resolvePaseoWorktree } from "./harness/source-paseo.js";
+import { prebuildZenticArtifacts, resolveZenticWorktree } from "./harness/source-zentic.js";
 import { currentProjectConfigurationFiles } from "../test-utils/current-project-configuration.js";
 
 const describeHubE2E = process.env["RUN_HUB_E2E"] === "1" ? describe : describe.skip;
 
-describeHubE2E("Paseo Hub cross-repository contract", () => {
+describeHubE2E("Zentic Hub cross-repository contract", () => {
   let hub: HubE2E;
 
   beforeAll(async () => {
-    await prebuildPaseoArtifacts(resolvePaseoWorktree());
+    await prebuildZenticArtifacts(resolveZenticWorktree());
   }, 600_000);
 
   beforeEach(async () => {
@@ -114,8 +114,8 @@ describeHubE2E("Paseo Hub cross-repository contract", () => {
         daemonId: configuration.environments[0]?.daemonId,
       },
       {
-        name: "paseo",
-        cwd: "/workspace/paseo",
+        name: "zentic",
+        cwd: "/workspace/zentic",
         daemonId: configuration.environments[1]?.daemonId,
       },
     ]);
@@ -129,7 +129,7 @@ describeHubE2E("Paseo Hub cross-repository contract", () => {
     });
     assert.deepEqual(configuration.classifierPartial, {
       kind: "partial",
-      path: ".paseo/workflows/partials/classify.md",
+      path: ".zentic/workflows/partials/classify.md",
       content:
         "Choose one configured repository environment and one complete named agent configuration.\n",
       contentHash: "dcfb1a4600e287c40ff4da4c38c98ac86a7f5508458b560dde9151aec03f6bf6",

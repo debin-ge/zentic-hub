@@ -16,7 +16,7 @@ import type { TriggerProvider } from "../triggers/index.js";
 import { createUnlimitedEntitlementsService } from "../entitlements/test-utils.js";
 import type { DaemonRecord } from "../db/types.js";
 import { createLogger, serializeError } from "../logger.js";
-import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getpaseo/protocol/agent-title-limits";
+import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getzentic/protocol/agent-title-limits";
 import { assertOneFailure, FailureLogStream } from "../test-utils/failure-logs.js";
 
 const DAEMON_ID = "daemon-ack-test";
@@ -29,8 +29,8 @@ describe("execution workspace title", () => {
 
   it("defaults to the trigger name and the execution prefix", () => {
     assert.equal(
-      executionWorkspaceTitle({ triggerName: "paseo-pr-triage" }, executionId),
-      "Hub · paseo-pr-triage · e6a296d1",
+      executionWorkspaceTitle({ triggerName: "zentic-pr-triage" }, executionId),
+      "Hub · zentic-pr-triage · e6a296d1",
     );
   });
 
