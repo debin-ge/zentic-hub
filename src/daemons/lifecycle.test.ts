@@ -16,7 +16,7 @@ import type { TriggerProvider } from "../triggers/index.js";
 import { createUnlimitedEntitlementsService } from "../entitlements/test-utils.js";
 import type { DaemonRecord } from "../db/types.js";
 import { createLogger, serializeError } from "../logger.js";
-import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getzentic/protocol/agent-title-limits";
+import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "./agent-title-limits.js";
 import { assertOneFailure, FailureLogStream } from "../test-utils/failure-logs.js";
 
 const DAEMON_ID = "daemon-ack-test";

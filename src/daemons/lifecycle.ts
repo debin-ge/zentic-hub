@@ -26,7 +26,7 @@ import {
   type LaunchMachineIntent,
 } from "../dispatcher/launch-machine-intent.js";
 import { logger as defaultLogger } from "../logger.js";
-import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "@getzentic/protocol/agent-title-limits";
+import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "./agent-title-limits.js";
 import { reportFailure } from "../failures/index.js";
 import type { TriggerProvider } from "../triggers/index.js";
 import type { ExecutionAuthority } from "../execution-authority/index.js";
