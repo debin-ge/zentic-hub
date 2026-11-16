@@ -508,8 +508,8 @@ describe("daemon enrollment and execution", () => {
         SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
       },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "write", pull_requests: "write" },
         durationMs: 60 * 60 * 1000,
       },
@@ -524,8 +524,8 @@ describe("daemon enrollment and execution", () => {
       SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     assert.deepEqual(persisted.launchIntent?.github, {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
       permissions: { contents: "write", pull_requests: "write" },
       durationMs: 60 * 60 * 1000,
     });
@@ -539,8 +539,8 @@ describe("daemon enrollment and execution", () => {
     assert.deepEqual(hub.authorityMintInputs(), [
       {
         projectId: "00000000-0000-4000-8000-000000000001",
-        connectionSlug: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connectionSlug: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "write", pull_requests: "write" },
       },
     ]);
@@ -554,8 +554,8 @@ describe("daemon enrollment and execution", () => {
     const settings = {
       continuation: { key: "same-thread", compatibility: { target: "same-repository" } },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "write" as const },
         durationMs: 60 * 60 * 1000,
       },
@@ -615,8 +615,8 @@ describe("daemon enrollment and execution", () => {
         timeoutMs: 10_000,
         continuation: { key: "bounded-thread", compatibility: { target: "same-repository" } },
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { contents: "write" as const },
           durationMs: 60 * 60 * 1000,
         },
@@ -645,8 +645,8 @@ describe("daemon enrollment and execution", () => {
     await hub.connectDaemon();
     const handedOff = await hub.handoff({
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "write" },
         durationMs: 60 * 60 * 1000,
       },
@@ -673,8 +673,8 @@ describe("daemon enrollment and execution", () => {
       startupTimeoutMs: 30_000,
       env: { TOKEN: "${{ zentic.connections.some-connection.token }}" },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },

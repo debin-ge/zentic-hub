@@ -405,8 +405,8 @@ export class HubE2E {
       "        idle_timeout: 5m",
       "        auto_archive: true",
       "        github:",
-      "          connection: getzentic-github",
-      "          repositories: [getzentic/zentic]",
+      "          connection: debin-ge-github",
+      "          repositories: [debin-ge/zentic]",
       "          permissions: {contents: write}",
       "        agent:",
       "          provider: hub-e2e",
@@ -1590,16 +1590,16 @@ export class HubE2E {
     await this.requirePool().query(
       `insert into github_connections
          (id, organization_id, installation_id, slug, account_id, account_login, account_type, status)
-       values ('00000000-0000-4000-8000-0000000000c3', 'hub-e2e', 9001, 'getzentic',
-               'getzentic', 'getzentic', 'Organization', 'active')
+       values ('00000000-0000-4000-8000-0000000000c3', 'hub-e2e', 9001, 'debin-ge',
+               'debin-ge', 'debin-ge', 'Organization', 'active')
        on conflict (installation_id) do nothing`,
     );
     await this.requirePool().query(
       `insert into github_repositories
          (organization_id, connection_id, repository_id, full_name, default_branch)
        values
-         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9101, 'getzentic/hub', 'main'),
-         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9102, 'getzentic/zentic', 'main')
+         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9101, 'debin-ge/zentic-hub', 'main'),
+         ('hub-e2e', '00000000-0000-4000-8000-0000000000c3', 9102, 'debin-ge/zentic', 'main')
        on conflict (connection_id, repository_id) do nothing`,
     );
   }

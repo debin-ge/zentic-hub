@@ -5841,7 +5841,7 @@ class ContractDaemon {
   /**
    * What the daemon says about an agent before Hub stores a trigger for it: the same catalog the
    * editor's comboboxes were filled from, answered the way a real daemon answers
-   * (`agent-configuration-validator.ts` in getzentic/zentic).
+   * (`agent-configuration-validator.ts` in debin-ge/zentic).
    */
   private acceptAgentValidation(value: unknown): boolean {
     const envelope = z

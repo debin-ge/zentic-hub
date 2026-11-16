@@ -171,10 +171,10 @@ describe("application runtime provider composition", () => {
         {
           id: "connection-1",
           organizationId: "org-1",
-          slug: "getzentic-github",
+          slug: "debin-ge-github",
           installationId: 42,
           accountId: "account-1",
-          accountLogin: "getzentic",
+          accountLogin: "debin-ge",
           accountType: "Organization",
           status: "active",
           providerApplicationId: "42",
@@ -182,7 +182,7 @@ describe("application runtime provider composition", () => {
         {
           id: "connection-2",
           organizationId: "org-1",
-          slug: "secondary-getzentic-github",
+          slug: "secondary-debin-ge-github",
           installationId: 84,
           accountId: "account-2",
           accountLogin: "zentic",
@@ -222,11 +222,11 @@ describe("application runtime provider composition", () => {
     assert.ok(providerResources);
     const resolveConnection = providerResources.connectionsForProject("project-1");
     assert.equal(
-      await resolveConnection("secondary-getzentic-github", "token"),
+      await resolveConnection("secondary-debin-ge-github", "token"),
       "organization-secret",
     );
     assert.deepEqual(calls, [
-      { projectId: "project-1", slug: "secondary-getzentic-github", value: "token" },
+      { projectId: "project-1", slug: "secondary-debin-ge-github", value: "token" },
     ]);
     await assert.rejects(
       async () => resolveConnection("missing-github", "token"),

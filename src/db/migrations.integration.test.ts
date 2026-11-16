@@ -190,7 +190,7 @@ describe("database migration application", () => {
           project_id, configuration_revision_id, connection_id, resource_id, receipt_id)
        values
          ('a1000000-0000-4000-8000-000000000001', 'phase-six-delivery', 'github.push',
-          'getzentic/hub', '{}', now(), 'phase-six-org',
+          'debin-ge/zentic-hub', '{}', now(), 'phase-six-org',
           '60000000-0000-4000-8000-000000000001',
           '70000000-0000-4000-8000-000000000001',
           '80000000-0000-4000-8000-000000000001', '960002',

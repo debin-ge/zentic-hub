@@ -35,12 +35,12 @@ test("marks prereleases without selecting a different changelog section", () => 
 });
 
 test("publishes latest only for stable releases", () => {
-  assert.deepEqual(imageTags("GetZentic", { version: "0.1.0", prerelease: false }), [
-    "ghcr.io/getzentic/hub:0.1.0",
-    "ghcr.io/getzentic/hub:latest",
+  assert.deepEqual(imageTags("Debin-Ge", { version: "0.1.0", prerelease: false }), [
+    "ghcr.io/debin-ge/zentic-hub:0.1.0",
+    "ghcr.io/debin-ge/zentic-hub:latest",
   ]);
-  assert.deepEqual(imageTags("GetZentic", { version: "0.2.0-beta.1", prerelease: true }), [
-    "ghcr.io/getzentic/hub:0.2.0-beta.1",
+  assert.deepEqual(imageTags("Debin-Ge", { version: "0.2.0-beta.1", prerelease: true }), [
+    "ghcr.io/debin-ge/zentic-hub:0.2.0-beta.1",
   ]);
 });
 

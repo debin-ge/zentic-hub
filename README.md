@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://zentic.sh/docs/hub">Docs</a> ·
-  <a href="https://github.com/getzentic/zentic">Zentic</a> ·
+  <a href="https://github.com/debin-ge/zentic">Zentic</a> ·
   <a href="LICENSE">Apache 2.0</a>
 </p>
 
@@ -71,7 +71,7 @@ Embedded mode supports one Hub process per data directory. Docker Compose contin
 You need Docker, Docker Compose, and a public HTTPS URL when connecting external providers.
 
 ```sh
-git clone https://github.com/getzentic/hub.git
+git clone https://github.com/debin-ge/zentic-hub.git
 cd hub
 cp .env.example .env
 ```
@@ -107,7 +107,7 @@ Open `ZENTIC_HUB_APP_URL`, sign in with the bootstrap account, and replace its t
 zentic hub connect https://hub.example.com
 ```
 
-The image is published as `ghcr.io/getzentic/hub:latest`.
+The image is published as `ghcr.io/debin-ge/zentic-hub:latest`.
 
 See the [self-hosting guide](https://zentic.sh/docs/hub/self-hosting) for production deployment details.
 For Linear setup and workflows, see the public [Linear app](https://zentic.sh/docs/hub/self-hosting/linear-app) and [Linear triggers](https://zentic.sh/docs/hub/triggers/linear) guides.

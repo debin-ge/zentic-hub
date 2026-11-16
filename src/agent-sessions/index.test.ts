@@ -246,8 +246,8 @@ test("steering keeps the active agent's scoped credentials instead of requiring 
   const f = await fixture();
   const env = { TOKEN: "${{ zentic.connections.support.token }}" };
   const github = {
-    connection: "getzentic-github",
-    repositories: ["getzentic/zentic"],
+    connection: "debin-ge-github",
+    repositories: ["debin-ge/zentic"],
     permissions: { contents: "write" as const },
     durationMs: 60 * 60 * 1000,
   };
@@ -276,8 +276,8 @@ test("steering cannot extend the active agent's original max-runtime deadline", 
 test("a completed credentialed task gets a fresh agent and isolates the previous agent's tools", async () => {
   const f = await fixture();
   const github = {
-    connection: "getzentic-github",
-    repositories: ["getzentic/zentic"],
+    connection: "debin-ge-github",
+    repositories: ["debin-ge/zentic"],
     permissions: { contents: "write" as const },
     durationMs: 60 * 60 * 1000,
   };

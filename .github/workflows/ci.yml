@@ -148,7 +148,7 @@ jobs:
       - name: Check out exact Zentic source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: getzentic/zentic
+          repository: debin-ge/zentic
           ref: ${{ env.ZENTIC_E2E_COMMIT }}
           path: zentic-source
 
@@ -193,7 +193,7 @@ jobs:
       - name: Check out exact Zentic source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: getzentic/zentic
+          repository: debin-ge/zentic
           ref: ${{ env.ZENTIC_E2E_COMMIT }}
           path: zentic-source
 

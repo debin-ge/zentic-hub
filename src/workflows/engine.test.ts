@@ -2014,8 +2014,8 @@ function skippedAuthorityConfiguration(): Record<string, unknown> {
             agent: { provider: "codex" },
             prompt: [{ text: "Classify" }],
             github: {
-              connection: "getzentic-github",
-              repositories: ["getzentic/zentic"],
+              connection: "debin-ge-github",
+              repositories: ["debin-ge/zentic"],
               permissions: { contents: "write" },
             },
           },

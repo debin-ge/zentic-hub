@@ -7,7 +7,7 @@ describe("GitHub reply output", () => {
     const createIssueComment = vi.fn(() => Promise.resolve());
     const outputContext = {
       provider: "github",
-      target: { installationId: 42, repository: "getzentic/hub" },
+      target: { installationId: 42, repository: "debin-ge/zentic-hub" },
       event: { github: { item: { number: 92 } } },
     };
 
@@ -23,8 +23,8 @@ describe("GitHub reply output", () => {
       [
         {
           installationId: 42,
-          owner: "getzentic",
-          repo: "hub",
+          owner: "debin-ge",
+          repo: "zentic-hub",
           issueNumber: 92,
           body: "Shipped.",
         },
@@ -36,7 +36,7 @@ describe("GitHub reply output", () => {
     assert.equal(
       githubReplyAvailable({
         provider: "github",
-        target: { installationId: 42, repository: "getzentic/hub" },
+        target: { installationId: 42, repository: "debin-ge/zentic-hub" },
         event: { github: { item: null } },
       }),
       false,

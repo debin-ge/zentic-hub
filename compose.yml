@@ -15,7 +15,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   hub:
-    image: ghcr.io/getzentic/hub:latest
+    image: ghcr.io/debin-ge/zentic-hub:latest
     pull_policy: always
     restart: unless-stopped
     depends_on:

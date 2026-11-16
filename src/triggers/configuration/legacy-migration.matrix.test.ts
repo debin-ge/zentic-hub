@@ -56,7 +56,7 @@ filters:
   contains: urgent
   label: support
   labels: [bug, urgent]
-  repo: getzentic/hub
+  repo: debin-ge/zentic-hub
   guild: zentic
   workspace: acme
   project: linear-project
@@ -74,8 +74,8 @@ steps:
     agent: "\${{ zentic.inputs.agent }}"
     env: { NODE_ENV: production }
     github:
-      connection: getzentic
-      repositories: [getzentic/hub]
+      connection: debin-ge
+      repositories: [debin-ge/zentic-hub]
       permissions: { contents: read, issues: write }
       duration: 30m
     prompt:

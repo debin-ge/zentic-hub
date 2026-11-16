@@ -66,7 +66,7 @@ A release is not done until all three are out.
 
 The tag must match both `package.json` and the changelog section. A tag push runs only the
 [Release](.github/workflows/release.yml) workflow; it does not rerun the main CI suite. The
-workflow publishes `ghcr.io/getzentic/hub:<version>`, updates `latest` for stable releases, and
+workflow publishes `ghcr.io/debin-ge/zentic-hub:<version>`, updates `latest` for stable releases, and
 creates or updates the GitHub Release from the matching changelog section. Prereleases do not
 move `latest`.
 
@@ -77,7 +77,7 @@ current changelog section update the existing release notes through
 
 ## Update public documentation
 
-Public Hub documentation lives in `getzentic/zentic` under `public-docs/`. Open a companion PR
+Public Hub documentation lives in `debin-ge/zentic` under `public-docs/`. Open a companion PR
 when an API, interface, or user-facing workflow change affects what users need to know or do.
 Internal changes and fixes that restore expected behavior do not require new public docs.
 If existing documentation becomes inaccurate, correct it with the smallest necessary edit.

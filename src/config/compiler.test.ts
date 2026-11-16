@@ -302,8 +302,8 @@ describe("workflow compiler", () => {
       SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     Reflect.set(step, "github", {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
     });
 
     const compiled = compileHubConfig(raw);
@@ -311,8 +311,8 @@ describe("workflow compiler", () => {
       SOME_TOKEN: "prefix-${{ zentic.connections.some-connection.token }}",
     });
     assert.deepEqual(compiled.triggers[0]?.steps[0]?.github, {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
       permissions: { contents: "read" },
       durationMs: 60 * 60 * 1000,
     });
@@ -329,13 +329,13 @@ describe("workflow compiler", () => {
           ...raw.triggers[0],
           on: "github.push",
           filters: { from_users: ["github-user"] },
-          steps: [{ ...step, github: { connection: "getzentic-github" } }],
+          steps: [{ ...step, github: { connection: "debin-ge-github" } }],
         },
       ],
     });
 
     assert.deepEqual(compiled.triggers[0]?.steps[0]?.github, {
-      connection: "getzentic-github",
+      connection: "debin-ge-github",
       permissions: { contents: "read" },
       durationMs: 60 * 60 * 1000,
     });
@@ -385,7 +385,7 @@ describe("workflow compiler", () => {
           triggers: [
             {
               ...raw.triggers[0],
-              steps: [{ ...step, github: { connection: "getzentic-github" } }],
+              steps: [{ ...step, github: { connection: "debin-ge-github" } }],
             },
           ],
         }),
@@ -399,24 +399,24 @@ describe("workflow compiler", () => {
     const cases = [
       {
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { contents: "admin" },
         },
         expected: /github\.permissions\.contents.*admin.*not supported/iu,
       },
       {
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { invented: "read" },
         },
         expected: /github\.permissions\.invented.*unknown GitHub permission/iu,
       },
       {
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           duration: "2h",
         },
         expected: /github\.duration.*must not exceed 1h/iu,
@@ -446,8 +446,8 @@ describe("workflow compiler", () => {
     const raw = configuration();
     const step = raw.triggers[0]!.steps[0]!;
     Reflect.set(step, "github", {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
       permissions: { [name]: level },
     });
 
@@ -461,8 +461,8 @@ describe("workflow compiler", () => {
       const raw = configuration();
       const step = raw.triggers[0]!.steps[0]!;
       Reflect.set(step, "github", {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { [name]: "write" },
       });
 
@@ -478,8 +478,8 @@ describe("workflow compiler", () => {
       GIT_CONFIG_COUNT: "1",
     });
     Reflect.set(step, "github", {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
     });
 
     assert.throws(
@@ -495,8 +495,8 @@ describe("workflow compiler", () => {
       const step = raw.triggers[0]!.steps[0]!;
       Reflect.set(step, "env", { [key]: "user-authored" });
       Reflect.set(step, "github", {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
       });
 
       assert.throws(() => compileHubConfig(raw), /reserved by the step-level github authority/iu);

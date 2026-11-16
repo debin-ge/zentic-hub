@@ -1,6 +1,6 @@
 # Zentic Hub
 
-Zentic Hub is the self-hosted open-source automation layer for existing Zentic (`getzentic/zentic`) daemons.
+Zentic Hub is the self-hosted open-source automation layer for existing Zentic (`debin-ge/zentic`) daemons.
 
 This repository contains the open-source Hub codebase. Its Fly files contain only the minimal,
 non-secret deployment wiring. Credentials, private workflow configuration, and operational
@@ -8,7 +8,7 @@ runbooks for privately operated instances must not live here.
 
 The optional billing integration in `src/billing/` is inert without `STRIPE_SECRET_KEY`; instances without billing configuration expose no billing surface. See `docs/entitlements.md` and `docs/billing.md`.
 
-Public docs live in `getzentic/zentic` under `public-docs/`. Follow the documentation criteria in `MAINTAINERS.md` before opening a companion PR.
+Public docs live in `debin-ge/zentic` under `public-docs/`. Follow the documentation criteria in `MAINTAINERS.md` before opening a companion PR.
 
 Repository verification, release, cross-repository compatibility, and documentation procedures
 live in `MAINTAINERS.md`.

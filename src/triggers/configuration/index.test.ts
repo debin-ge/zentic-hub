@@ -44,7 +44,7 @@ on:
       channels: [engineering]
       from_users: [U0BNGPZEXT2]
   github.issue_comment:
-    connection: getzentic-github
+    connection: debin-ge-github
     filters:
       contains: "@zentic-bot"
       from_users: [boudra]
@@ -69,8 +69,8 @@ run:
   max_runtime: 90m
   idle_timeout: 10m
   github:
-    connection: getzentic-github
-    repositories: [getzentic/zentic, getzentic/hub]
+    connection: debin-ge-github
+    repositories: [debin-ge/zentic, debin-ge/zentic-hub]
     permissions:
       contents: write
       pull_requests: write

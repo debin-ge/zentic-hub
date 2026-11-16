@@ -227,10 +227,10 @@ describe("GitHub registration", () => {
         {
           id: "github-connection",
           organizationId: "org_1",
-          slug: "getzentic-github",
+          slug: "debin-ge-github",
           installationId: 142,
           accountId: "501",
-          accountLogin: "getzentic",
+          accountLogin: "debin-ge",
           accountType: "Organization",
           status: "active",
           providerApplicationId: "42",
@@ -271,12 +271,12 @@ describe("GitHub registration", () => {
     });
 
     assert.equal(
-      await registration.integration?.resolve("project-1", "getzentic-github", "token"),
+      await registration.integration?.resolve("project-1", "debin-ge-github", "token"),
       "test-installation-token",
     );
     assert.deepEqual(installations, [142]);
     await assert.rejects(
-      () => registration.integration!.resolve("project-2", "getzentic-github", "token"),
+      () => registration.integration!.resolve("project-2", "debin-ge-github", "token"),
       /connection is unavailable/u,
     );
   });
@@ -290,10 +290,10 @@ describe("GitHub registration", () => {
         {
           id: "github-connection",
           organizationId: "org_1",
-          slug: "getzentic-github",
+          slug: "debin-ge-github",
           installationId: 142,
           accountId: "501",
-          accountLogin: "getzentic",
+          accountLogin: "debin-ge",
           accountType: "Organization",
           status: "active",
           providerApplicationId: "42",
@@ -346,15 +346,15 @@ describe("GitHub registration", () => {
     assert.ok(authority);
     const minted = await authority.mint({
       projectId: "project-1",
-      connectionSlug: "getzentic-github",
-      repositories: ["getzentic/zentic", "getzentic/hub"],
+      connectionSlug: "debin-ge-github",
+      repositories: ["debin-ge/zentic", "debin-ge/zentic-hub"],
       permissions: { contents: "write", pull_requests: "read" },
     });
     assert.deepEqual(requests, [
       {
         installationId: 142,
-        accountLogin: "getzentic",
-        repositories: ["getzentic/zentic", "getzentic/hub"],
+        accountLogin: "debin-ge",
+        repositories: ["debin-ge/zentic", "debin-ge/zentic-hub"],
         permissions: { contents: "write", pull_requests: "read" },
       },
     ]);
@@ -371,25 +371,25 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-1",
-          connectionSlug: "getzentic-github",
+          connectionSlug: "debin-ge-github",
           repositories: ["other-owner/zentic"],
           permissions: { contents: "read" },
         }),
-      /repository owner.*other-owner.*getzentic/iu,
+      /repository owner.*other-owner.*debin-ge/iu,
     );
     assert.equal(requests.length, 1);
     assert.equal(identityLookups, 1);
 
     const caseInsensitive = await authority.mint({
       projectId: "project-1",
-      connectionSlug: "getzentic-github",
-      repositories: ["GETZENTIC/private"],
+      connectionSlug: "debin-ge-github",
+      repositories: ["DEBIN-GE/private"],
       permissions: { contents: "read" },
     });
     assert.deepEqual(requests[1], {
       installationId: 142,
-      accountLogin: "getzentic",
-      repositories: ["GETZENTIC/private"],
+      accountLogin: "debin-ge",
+      repositories: ["DEBIN-GE/private"],
       permissions: { contents: "read" },
     });
 
@@ -398,8 +398,8 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-1",
-          connectionSlug: "getzentic-github",
-          repositories: ["getzentic/hub"],
+          connectionSlug: "debin-ge-github",
+          repositories: ["debin-ge/zentic-hub"],
           permissions: { contents: "read" },
         }),
       /identity unavailable/u,
@@ -413,8 +413,8 @@ describe("GitHub registration", () => {
       () =>
         authority.mint({
           projectId: "project-2",
-          connectionSlug: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connectionSlug: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { contents: "read" },
         }),
       /connection is unavailable/u,

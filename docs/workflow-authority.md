@@ -26,9 +26,9 @@ GitHub authority is opt-in and step-scoped:
 
 ```yaml
 github:
-  connection: getzentic-github
+  connection: debin-ge-github
   repositories:
-    - getzentic/zentic
+    - debin-ge/zentic
   permissions:
     contents: write
     pull_requests: write

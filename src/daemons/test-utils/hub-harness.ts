@@ -354,7 +354,7 @@ export class HubHarness {
     await client.query(
       `insert into github_connections
          (id, organization_id, installation_id, slug, account_id, account_login, account_type, status)
-       values ($1, $2, 9001, 'getzentic', 'getzentic', 'getzentic', 'Organization', 'active')
+       values ($1, $2, 9001, 'debin-ge', 'debin-ge', 'debin-ge', 'Organization', 'active')
        on conflict (installation_id) do nothing`,
       [githubId, HUB_ORGANIZATION_ID],
     );
@@ -362,8 +362,8 @@ export class HubHarness {
       `insert into github_repositories
          (organization_id, connection_id, repository_id, full_name, default_branch)
        values
-         ($1, $2, 9101, 'getzentic/hub', 'main'),
-         ($1, $2, 9102, 'getzentic/zentic', 'main')
+         ($1, $2, 9101, 'debin-ge/zentic-hub', 'main'),
+         ($1, $2, 9102, 'debin-ge/zentic', 'main')
        on conflict (connection_id, repository_id) do nothing`,
       [HUB_ORGANIZATION_ID, githubId],
     );

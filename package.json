@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/getzentic/hub.git"
+    "url": "git+https://github.com/debin-ge/zentic-hub.git"
   },
   "bin": {
     "zentic-hub": "bin/zentic-hub.js"

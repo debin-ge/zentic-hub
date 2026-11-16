@@ -29,7 +29,7 @@ describe("Hub execution authority", () => {
       triggerContext: {},
       github: {
         connection: "github",
-        repositories: ["getzentic/zentic"],
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" as const },
         durationMs: 60_000,
       },
@@ -101,8 +101,8 @@ describe("Hub execution authority", () => {
       githubAuthority: mint,
     });
     const github: CompiledGitHubAuthority = {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic", "getzentic/hub"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic", "debin-ge/zentic-hub"],
       permissions: { contents: "write", pull_requests: "write", issues: "read" },
       durationMs: 30 * 60 * 1000,
     };
@@ -117,8 +117,8 @@ describe("Hub execution authority", () => {
     assert.deepEqual(mint.inputs, [
       {
         projectId: "project-1",
-        connectionSlug: "getzentic-github",
-        repositories: ["getzentic/zentic", "getzentic/hub"],
+        connectionSlug: "debin-ge-github",
+        repositories: ["debin-ge/zentic", "debin-ge/zentic-hub"],
         permissions: { contents: "write", pull_requests: "write", issues: "read" },
       },
     ]);
@@ -153,16 +153,16 @@ describe("Hub execution authority", () => {
       projectId: "project-1",
       triggerContext: {
         provider: "github",
-        target: { repository: "getzentic/zentic" },
+        target: { repository: "debin-ge/zentic" },
       },
       github: {
-        connection: "getzentic-github",
+        connection: "debin-ge-github",
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },
     });
 
-    assert.deepEqual(mint.inputs[0]?.repositories, ["getzentic/zentic"]);
+    assert.deepEqual(mint.inputs[0]?.repositories, ["debin-ge/zentic"]);
   });
 
   it("rejects an omitted repository list when no safe event repository exists", async () => {
@@ -178,7 +178,7 @@ describe("Hub execution authority", () => {
         projectId: "project-1",
         triggerContext: { provider: "manual" },
         github: {
-          connection: "getzentic-github",
+          connection: "debin-ge-github",
           permissions: { contents: "read" },
           durationMs: 60 * 60 * 1000,
         },
@@ -200,8 +200,8 @@ describe("Hub execution authority", () => {
       clock,
     });
     const github = {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
       permissions: { contents: "read" },
       durationMs: 5 * 60 * 1000,
     } satisfies CompiledGitHubAuthority;
@@ -234,8 +234,8 @@ describe("Hub execution authority", () => {
       githubAuthority: mint,
     });
     const github = {
-      connection: "getzentic-github",
-      repositories: ["getzentic/zentic"],
+      connection: "debin-ge-github",
+      repositories: ["debin-ge/zentic"],
       permissions: { contents: "read" },
       durationMs: 60 * 60 * 1000,
     } satisfies CompiledGitHubAuthority;
@@ -287,8 +287,8 @@ describe("Hub execution authority", () => {
         projectId: "project-1",
         triggerContext: { provider: "manual" },
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { contents: "read" },
           durationMs: 60 * 60 * 1000,
         },
@@ -410,8 +410,8 @@ describe("Hub execution authority", () => {
         projectId: "project-1",
         triggerContext: { provider: "manual" },
         github: {
-          connection: "getzentic-github",
-          repositories: ["getzentic/zentic"],
+          connection: "debin-ge-github",
+          repositories: ["debin-ge/zentic"],
           permissions: { contents: "read" },
           durationMs: 60 * 60 * 1000,
         },
@@ -458,8 +458,8 @@ describe("Hub execution authority", () => {
       projectId: "project-1",
       triggerContext: { provider: "manual" },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },
@@ -504,8 +504,8 @@ describe("Hub execution authority", () => {
       projectId: "project-1",
       triggerContext: { provider: "manual" },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" },
         durationMs: 5 * 60 * 1000,
       },
@@ -545,8 +545,8 @@ describe("Hub execution authority", () => {
       projectId: "project-1",
       triggerContext: { provider: "manual" },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },
@@ -584,8 +584,8 @@ describe("Hub execution authority", () => {
       projectId: "project-1",
       triggerContext: { provider: "manual" },
       github: {
-        connection: "getzentic-github",
-        repositories: ["getzentic/zentic"],
+        connection: "debin-ge-github",
+        repositories: ["debin-ge/zentic"],
         permissions: { contents: "read" },
         durationMs: 60 * 60 * 1000,
       },
@@ -929,7 +929,7 @@ function restartInput() {
     triggerContext: {},
     github: {
       connection: "github",
-      repositories: ["getzentic/zentic"],
+      repositories: ["debin-ge/zentic"],
       permissions: { contents: "write" as const },
       durationMs: 60_000,
     },

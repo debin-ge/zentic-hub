@@ -2,7 +2,7 @@ name: github-zentic
 on: github.issue_comment
 max_runtime: 2h
 filters:
-  repo: getzentic/zentic
+  repo: debin-ge/zentic
   from_users: [maintainer]
 steps:
   - id: work
@@ -11,6 +11,6 @@ steps:
     idle_timeout: 10m
     agent: codex
     github:
-      connection: getzentic
+      connection: debin-ge
     prompt:
       - text: ${{ zentic.prompt }}
