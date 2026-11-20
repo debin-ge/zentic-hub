@@ -6,24 +6,28 @@ This guide covers repository operations for maintainers. Product usage belongs i
 
 ## Verify a change
 
-The required checks match the jobs in [CI](.github/workflows/ci.yml):
+[CI](.github/workflows/ci.yml) runs these checks in one job. It starts only from the Actions tab:
 
 ```sh
-npm run typecheck
-npm run lint
 npm run format:check
-npm test
+npm run lint
+npm run typecheck
 npm run db:check
+npm test
 npm run build
+```
+
+These suites are not in CI. Run them yourself when your change needs them:
+
+```sh
 npm run docker:smoke
 npm run test:e2e:browser
 npm run test:e2e:hub:source
 ```
 
-The source-built browser and Hub suites use the exact Zentic commit in `ZENTIC_E2E_COMMIT`.
-When a Hub change depends on a Zentic protocol or CLI change, update that immutable SHA and
-prove the combined contract before merging. Do not replace it with a branch or another mutable
-reference.
+The browser and Hub suites need a built Zentic checkout named by `ZENTIC_E2E_WORKTREE`. When a
+Hub change depends on a Zentic protocol or CLI change, prove the combined contract against that
+Zentic commit before merging.
 
 Use the repository formatter through `npm run format` or `npm run format:files`. This repository
 uses Oxfmt, not Prettier.
