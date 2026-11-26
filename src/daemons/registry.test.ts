@@ -88,7 +88,10 @@ describe("daemon socket protocol negotiation", () => {
         client.once("open", resolve);
         client.once("error", reject);
       });
-      await new Promise<void>((resolve) => setImmediate(resolve));
+      // The hello is a separate frame written after the 101 response, so it can
+      // arrive in a later TCP read than the one that fires `open`.
+      if (expectsHello) await vi.waitFor(() => assert(messages.length > 0), { timeout: 5_000 });
+      else await new Promise<void>((resolve) => setImmediate(resolve));
 
       assert.equal(negotiatedProtocol, expectedProtocol);
       assert.equal(

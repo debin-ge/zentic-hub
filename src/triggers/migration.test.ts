@@ -79,7 +79,7 @@ describe("startup project trigger migration", () => {
     await migrateLegacyProjectTriggers(database);
     assert.deepEqual(
       (await database.listOrganizationTriggers("org")).map(({ name }) => name).sort(),
-      ["zentic-request", "request"],
+      ["request", "zentic-request"],
     );
   });
 
