@@ -6,7 +6,7 @@ This guide covers repository operations for maintainers. Product usage belongs i
 
 ## Verify a change
 
-[CI](.github/workflows/ci.yml) runs these checks in one job. It starts only from the Actions tab:
+[CI](.github/workflows/ci.yml) runs these checks in one job. It runs on every push to `main`, and from the Actions tab for any other ref:
 
 ```sh
 npm run format:check
